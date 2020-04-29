@@ -10,6 +10,7 @@ namespace yyy_tours.Models
         public string GuideEmail { get; set; }
         public int Price { get; set; }
         public int Capacity { get; set; }
+        public DateTime Date { get; set; }
 
 
         public Trip()
