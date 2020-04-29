@@ -23,7 +23,7 @@ namespace yyy_tours.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult UserRegistration()
         {
             return View();
         }
