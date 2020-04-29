@@ -7,8 +7,6 @@
 @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
     <div class=" row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.FullName, "שם מלא")
@@ -47,6 +45,7 @@
         </div>
     </div>
 
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
     <input type="submit" value="הרשמה" class="btn btn-default" />
 }
