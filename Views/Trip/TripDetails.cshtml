@@ -1,0 +1,55 @@
+@model Trip
+@{
+    ViewData["Title"] = $"{Model.PlaceId}.DisplayName - {Model.DisplayName}";
+}
+@section Styles {
+    <link href="@Url.Content("~/css/TripDetails.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="jumbotron jumbotron-fluid">
+  <h1>@Model.DisplayName</h1> 
+      <p class="lead">@Model.Date.ToShortDateString()</p>
+</div>
+
+<img id="place" src="https://img.oastatic.com/img2/15281261/max/besucher-in-masada.jpg" alt="">
+
+<div class="container">
+    <h3>מידע על הטיול</h3>
+    <table class="table">
+        <tr>
+            <td>שם המדריך: </td>
+            <td>@Model.GuideEmail -> FullName</td>
+        </tr>
+        <tr>
+            <td>זמן יציאה:</td>
+            <td>יום @Model.GetTripDayInHebrew() ה- @Model.Date.ToShortDateString() בשעה @Model.Date.ToShortTimeString()</td>
+        </tr>
+        <tr>
+            <td>משך זמן:</td>
+            <td>@Model.TimeInHours שעות (סיום משוער בשעה @Model.GetEndDateTime().ToShortTimeString())</td>
+        </tr>
+        <tr>
+            <td>תיאור:</td>
+            <td>@Model.Description</td>
+        </tr>
+        <tr>
+            <td>מחיר:</td>
+            <td>@Model.Price ש״ח לאדם</td>
+        </tr>
+    </table>
+  <h3>מידע על האתר</h3>
+  <div class="row">
+    <div class="col-sm-8">
+      <table class="table">
+          <tr>
+              <td>שם האתר:</td>
+              <td>כאן יהיה שם המקום</td>
+          </tr>
+          <tr>
+              <td>תיאור: </td>
+              <td>כאן יהיה תיאור האתר</td>
+          </tr>
+      </table>
+    </div>
+  <div class="col-sm-4">כאן תהייה מפה</div>
+</div>
