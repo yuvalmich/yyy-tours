@@ -11,14 +11,14 @@
       <p class="lead">@Model.Date.ToShortDateString()</p>
 </div>
 
-<img id="place" src="https://img.oastatic.com/img2/15281261/max/besucher-in-masada.jpg" alt="">
+<img id="place" src="@Model.Place.ImageUrl" alt="">
 
 <div class="container">
     <h3>מידע על הטיול</h3>
     <table class="table">
         <tr>
             <td>שם המדריך: </td>
-            <td>@Model.GuideEmail -> FullName</td>
+            <td>@Model.Guide.FullName</td>
         </tr>
         <tr>
             <td>זמן יציאה:</td>
@@ -43,13 +43,18 @@
       <table class="table">
           <tr>
               <td>שם האתר:</td>
-              <td>כאן יהיה שם המקום</td>
+              <td>@Model.Place.Name</td>
           </tr>
           <tr>
               <td>תיאור: </td>
-              <td>כאן יהיה תיאור האתר</td>
+              <td>@Model.Place.Description</td>
           </tr>
       </table>
     </div>
-  <div class="col-sm-4">כאן תהייה מפה</div>
+  <div class="col-sm-4">
+      <iframe 
+      src="@Model.Place.GoogleMapEmbededUrl"
+    width="350" height="250" frameborder="0" style="border:0;" 
+    allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+  </div>
 </div>
