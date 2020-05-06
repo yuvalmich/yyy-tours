@@ -2,12 +2,16 @@
 @{
     ViewData["Title"] = "התחברות";
 }
+
+@section Styles {
+    <link href="@Url.Content("~/css/form.css")" rel="stylesheet" type="text/css" />
+}
+
 <h1 dir="rtl">@ViewData["Title"]</h1>
 
 @using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
 {
-    @Html.AntiForgeryToken()
-    <div class=" row small-top">
+    <div class="form-row row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.Email, "מייל")
         </div>
@@ -17,7 +21,7 @@
     </div>
 
 
-    <div class=" row small-top">
+    <div class="form-row row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.Password, "סיסמה")
         </div>
@@ -26,7 +30,12 @@
         </div>
     </div>
 
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Html.ValidationSummary(true, "")
+        </div>
+    }
 
-    <input type="submit" value="כניסה" class="btn btn-default" />
-}
+    <input type="submit" value="כניסה" class="btn btn-primary" />
+    }
