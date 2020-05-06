@@ -1,0 +1,32 @@
+﻿@model User
+@{
+    ViewData["Title"] = "התחברות";
+}
+<h1 dir="rtl">@ViewData["Title"]</h1>
+
+@using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class=" row small-top">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.Email, "מייל")
+        </div>
+        <div class="col-md-9">
+            @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+    <div class=" row small-top">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.Password, "סיסמה")
+        </div>
+        <div class="col-md-9">
+            @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+        </div>
+    </div>
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <input type="submit" value="כניסה" class="btn btn-default" />
+}
