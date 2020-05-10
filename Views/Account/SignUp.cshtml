@@ -2,12 +2,17 @@
 @{
     ViewData["Title"] = "יצירת חשבון";
 }
-<h1 dir="rtl">@ViewData["Title"]</h1>
+
+@section Styles {
+    <link href="@Url.Content("~/css/form.css")" rel="stylesheet" type="text/css" />
+}
+
+<h1>@ViewData["Title"]</h1>
 
 @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    <div class=" row small-top">
+    <div class="form-row row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.FullName, "שם מלא")
         </div>
@@ -15,9 +20,14 @@
             @Html.TextBoxFor(model => model.FullName, new { @class = "form-control" })
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-9">
+            @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+        </div>
+    </div>
 
 
-    <div class=" row small-top">
+    <div class="form-row row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.Email, "מייל")
         </div>
@@ -25,9 +35,13 @@
             @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-9">
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
 
-
-    <div class=" row small-top">
+    <div class="form-row row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.Phone, "מספר טלפון")
         </div>
@@ -35,8 +49,13 @@
             @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-9">
+            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+        </div>
+    </div>
 
-    <div class=" row small-top">
+    <div class="form-row row small-top">
         <div class="col-md-3">
             @Html.LabelFor(model => model.Password, "סיסמה")
         </div>
@@ -44,8 +63,11 @@
             @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-9">
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+    </div>
 
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-
-    <input type="submit" value="הרשמה" class="btn btn-default" />
+    <input type="submit" value="הרשמה" class="btn btn-primary" />
 }
