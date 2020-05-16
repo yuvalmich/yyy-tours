@@ -19,13 +19,10 @@
         <div class="col-md-9">
             @Html.TextBoxFor(model => model.FullName, new { @class = "form-control" })
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-9 offset-md-3">
             @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
         </div>
     </div>
-
 
     <div class="form-row row small-top">
         <div class="col-md-3">
@@ -34,11 +31,12 @@
         <div class="col-md-9">
             @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-9 offset-md-3">
             @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
         </div>
+
+    </div>
+    <div class="row">
     </div>
 
     <div class="form-row row small-top">
@@ -48,9 +46,7 @@
         <div class="col-md-9">
             @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-9 offset-md-3">
             @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -62,9 +58,7 @@
         <div class="col-md-9">
             @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-9 offset-md-3">
             @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
         </div>
     </div>
