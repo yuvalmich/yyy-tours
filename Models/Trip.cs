@@ -31,5 +31,10 @@ namespace yyy_tours.Models
         {
             return this.Date.AddHours(this.TimeInHours);
         }
+
+        public TimeSpan GetTimeToStart()
+        {
+            return  this.Date.Date - DateTime.Today.Date;
+        }
     }
 }

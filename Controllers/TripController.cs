@@ -54,7 +54,7 @@ namespace yyy_tours.Controllers
                 },
                 Price = 100,
                 Capacity = 20,
-                Date = new DateTime(2020,5,14,4,30,0), // 14/5/20 04:30
+                Date = new DateTime(2020,6,3,4,30,0), // 14/5/20 04:30
                 TimeInHours = 6
             },
             new Trip()
@@ -122,5 +122,11 @@ namespace yyy_tours.Controllers
                 return NotFound($"not found trip id = {id}");
             }
         }
+
+        public IActionResult Catalog()
+    {
+        var trips = allTrips.Where(i=>i.Date > DateTime.Now).OrderBy(i=>i.Date);
+        return View("catalog", trips);
+    }
     }
 }

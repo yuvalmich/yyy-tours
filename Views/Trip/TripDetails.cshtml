@@ -1,6 +1,6 @@
 @model Trip
 @{
-    ViewData["Title"] = $"{Model.PlaceId}.DisplayName - {Model.DisplayName}";
+    ViewData["Title"] = $"{Model.Place.Name} - {Model.DisplayName}";
 }
 @section Styles {
     <link href="@Url.Content("~/css/TripDetails.css")" rel="stylesheet" type="text/css" />

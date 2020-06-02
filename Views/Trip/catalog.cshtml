@@ -1,0 +1,45 @@
+@model IEnumerable<Trip>
+@{
+    ViewData["Title"] = "קטלוג טיולים";
+}
+@section Styles {
+    <link href="@Url.Content("~/css/TripCatalog.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="container">
+    <h1>קטלוג הטיולים</h1>
+    <div class="row row-cols-1 row-cols-md-3">
+    @foreach (var item in Model)
+{
+    <div class="col mb-4">
+    <div class="card" style="width: 18rem;">
+  <img src="@item.Place.ImageUrl" class="card-img-top" alt="@item.Place.Name">
+  <div class="card-body">
+    <h5 class="card-title">@item.Place.Name</h5>
+    <p class="card-text">@item.DisplayName</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">@item.Date.ToShortDateString()
+        @if(item.GetTimeToStart().Days <=3 && item.GetTimeToStart().Days > 1)
+        {
+            <span class="badge badge-secondary">בעוד @item.GetTimeToStart().Days ימים</span>
+        }
+        @if(item.GetTimeToStart().Days == 1)
+        {
+            <span class="badge badge-info">מחר</span>
+        }
+        @if(item.GetTimeToStart().Days == 0)
+        {
+            <span class="badge badge-success">היום</span>
+        }
+    </li> 
+    <li class="list-group-item">@item.TimeInHours שעות</li>
+  </ul>
+  <div class="card-body">
+    <a href="/trip/TripDetails/@item.Id" class="card-link">לפרטים</a>
+  </div>
+</div>
+</div>
+}
+</div>
+</div>
