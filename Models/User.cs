@@ -4,7 +4,10 @@ using System.ComponentModel.DataAnnotations;
 namespace yyytours.Models
 {
     public class User
-    {
+    {  
+        [Key]
+        public string ID { get; set; }
+
         [Required(ErrorMessage = "מייל אינו יכול להיות ריק")]
         [EmailAddress(ErrorMessage = "מייל אינו תקין")]
         public string Email { get; set; }
@@ -21,9 +24,6 @@ namespace yyytours.Models
         public string Password { get; set; }
 
         public UserType Type { get; set; }
-
-        public string ID { get; set; }
-
 
         public User() { }
     }

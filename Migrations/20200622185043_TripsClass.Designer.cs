@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using yyytours;
 
 namespace yyytours.Migrations
 {
     [DbContext(typeof(yyyWebProjContext))]
-    partial class yyyWebProjContextModelSnapshot : ModelSnapshot
+    [Migration("20200622185043_TripsClass")]
+    partial class TripsClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

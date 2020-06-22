@@ -35,6 +35,8 @@ namespace yyytours
 
         public DbSet<yyytours.Models.Place> Place { get; set; }
 
+        public DbSet<yyytours.Models.Trip> Trip { get; set; }
+
 
     }
 }
