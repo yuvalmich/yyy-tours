@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Globalization;
-using System.Threading;
 
-namespace yyy_tours
+namespace yyytours
 {
     public class Startup
     {
@@ -26,6 +25,9 @@ namespace yyy_tours
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddDbContext<yyyWebProjContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("yyydb")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
