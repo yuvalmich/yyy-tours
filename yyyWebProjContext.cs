@@ -33,6 +33,8 @@ namespace yyytours
 
         public DbSet<yyytours.Models.User> User { get; set; }
 
+        public DbSet<yyytours.Models.Place> Place { get; set; }
+
 
     }
 }
