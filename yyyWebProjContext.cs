@@ -30,5 +30,9 @@ namespace yyytours
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<yyytours.Models.User> User { get; set; }
+
+
     }
 }
