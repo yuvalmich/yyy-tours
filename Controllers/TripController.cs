@@ -46,6 +46,15 @@ namespace yyytours.Controllers
             return View(trip);
         }
 
+        public async Task<IActionResult> Catalog()
+    {
+        var trips = await _context.Trip
+                .Include(t => t.Guide)
+                .Include(t => t.Place)
+                .Where(i=>i.Date > DateTime.Now).OrderBy(i=>i.Date).ToListAsync();
+        return View("catalog", trips);
+    }
+
         // GET: Trip/Create
         public IActionResult Create()
         {
