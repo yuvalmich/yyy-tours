@@ -1,6 +1,6 @@
 using System;
 
-namespace yyy_tours.Models
+namespace yyytours.Models
 {
     public class ErrorViewModel
     {

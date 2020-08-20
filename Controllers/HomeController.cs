@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using yyy_tours.Models;
+using yyytours.Models;
 
-namespace yyy_tours.Controllers
+namespace yyytours.Controllers
 {
     public class HomeController : Controller
     {
@@ -23,7 +23,7 @@ namespace yyy_tours.Controllers
             return View();
         }
 
-        public IActionResult UserRegistration()
+        public IActionResult Privacy()
         {
             return View();
         }

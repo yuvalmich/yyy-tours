@@ -10,23 +10,22 @@ using yyytours.Models;
 
 namespace yyytours.Controllers
 {
-    public class TripController : Controller
+    public class PlaceController : Controller
     {
         private readonly yyyWebProjContext _context;
 
-        public TripController(yyyWebProjContext context)
+        public PlaceController(yyyWebProjContext context)
         {
             _context = context;
         }
 
-        // GET: Trip
+        // GET: Place
         public async Task<IActionResult> Index()
         {
-            var yyyWebProjContext = _context.Trip.Include(t => t.Guide).Include(t => t.Place);
-            return View(await yyyWebProjContext.ToListAsync());
+            return View(await _context.Place.ToListAsync());
         }
 
-        // GET: Trip/Details/5
+        // GET: Place/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -34,45 +33,39 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
-            var trip = await _context.Trip
-                .Include(t => t.Guide)
-                .Include(t => t.Place)
+            var place = await _context.Place
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (trip == null)
+            if (place == null)
             {
                 return NotFound();
             }
 
-            return View(trip);
+            return View(place);
         }
 
-        // GET: Trip/Create
+        // GET: Place/Create
         public IActionResult Create()
         {
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID");
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID");
             return View();
         }
 
-        // POST: Trip/Create
+        // POST: Place/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
+        public async Task<IActionResult> Create([Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(trip);
+                _context.Add(place);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
-            return View(trip);
+            return View(place);
         }
 
-        // GET: Trip/Edit/5
+        // GET: Place/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -80,24 +73,22 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
-            var trip = await _context.Trip.FindAsync(id);
-            if (trip == null)
+            var place = await _context.Place.FindAsync(id);
+            if (place == null)
             {
                 return NotFound();
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
-            return View(trip);
+            return View(place);
         }
 
-        // POST: Trip/Edit/5
+        // POST: Place/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
+        public async Task<IActionResult> Edit(string id, [Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
-            if (id != trip.ID)
+            if (id != place.ID)
             {
                 return NotFound();
             }
@@ -106,12 +97,12 @@ namespace yyytours.Controllers
             {
                 try
                 {
-                    _context.Update(trip);
+                    _context.Update(place);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TripExists(trip.ID))
+                    if (!PlaceExists(place.ID))
                     {
                         return NotFound();
                     }
@@ -122,12 +113,10 @@ namespace yyytours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
-            return View(trip);
+            return View(place);
         }
 
-        // GET: Trip/Delete/5
+        // GET: Place/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -135,32 +124,30 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
-            var trip = await _context.Trip
-                .Include(t => t.Guide)
-                .Include(t => t.Place)
+            var place = await _context.Place
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (trip == null)
+            if (place == null)
             {
                 return NotFound();
             }
 
-            return View(trip);
+            return View(place);
         }
 
-        // POST: Trip/Delete/5
+        // POST: Place/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var trip = await _context.Trip.FindAsync(id);
-            _context.Trip.Remove(trip);
+            var place = await _context.Place.FindAsync(id);
+            _context.Place.Remove(place);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TripExists(string id)
+        private bool PlaceExists(string id)
         {
-            return _context.Trip.Any(e => e.ID == id);
+            return _context.Place.Any(e => e.ID == id);
         }
     }
 }

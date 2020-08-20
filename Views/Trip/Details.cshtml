@@ -1,0 +1,98 @@
+@model Trip
+@{
+    ViewData["Title"] = $"{Model.Place.Name} - {Model.DisplayName}";
+}
+@section Styles {
+    <link href="@Url.Content("~/css/TripDetails.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="jumbotron jumbotron-fluid">
+  <h1>@Html.DisplayFor(model=> model.DisplayName)</h1> 
+      <p class="lead">@Html.Display(Model.Date.ToShortDateString())</p>
+</div>
+
+<img id="place" src="@Model.Place.ImageUrl" alt="">
+
+<div class="container">
+    <h3>מידע על הטיול</h3>
+    <table class="table">
+        <tr>
+            <td>שם המדריך: </td>
+            <td>@Html.DisplayFor(model=> model.Guide.FullName)</td>
+        </tr>
+        <tr>
+            <td>@Html.DisplayNameFor(model=>model.Date):</td>
+            <td>יום @Html.DisplayFor(model=> model.GetTripDayInHebrew) ה- @Html.Display(Model.Date.ToShortDateString()) בשעה @Html.Display(Model.Date.ToShortTimeString())</td>
+        </tr>
+        <tr>
+            <td>@Html.DisplayNameFor(model=>model.TimeInHours):</td>
+            <td>@Html.DisplayFor(model=> model.TimeInHours) שעות (סיום משוער בשעה @Html.Display(Model.GetEndDateTime.ToShortTimeString()))</td>
+        </tr>
+        <tr>
+            <td>@Html.DisplayNameFor(model=> model.Description):</td>
+            <td>@Html.DisplayFor(model=> model.Description)</td>
+        </tr>
+        <tr>
+            <td>@Html.DisplayNameFor(model=> model.Price):</td>
+            <td>@Html.DisplayFor(model=> model.Price) ש״ח לאדם</td>
+        </tr>
+    </table>
+  <h3>מידע על האתר</h3>
+  <div class="row">
+    <div class="col-sm-8">
+      <table class="table">
+          <tr>
+              <td>שם האתר:</td>
+              <td>@Html.DisplayFor(model=> model.Place.Name)</td>
+          </tr>
+          <tr>
+              <td>@Html.DisplayNameFor(model=>model.Place.Description): </td>
+              <td>@Html.DisplayFor(model=> model.Place.Description)</td>
+          </tr>
+      </table>
+    </div>
+  <div class="col-sm-4">
+      <script type='text/javascript'>
+    var map, searchManager;
+    function GetMap() {
+        map = new Microsoft.Maps.Map('#myMap', {});
+        //Make a request to geocode New York, NY.
+        geocodeQuery(@Html.Raw("\"" + Model.Place.Name + "\""));
+    }
+    function geocodeQuery(query) {
+        //If search manager is not defined, load the search module.
+        if (!searchManager) {
+            //Create an instance of the search manager and call the geocodeQuery function again.
+            Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
+                searchManager = new Microsoft.Maps.Search.SearchManager(map);
+                geocodeQuery(query);
+            });
+        } else {
+            var searchRequest = {
+                where: query,
+                callback: function (r) {
+                    //Add the first result to the map and zoom into it.
+                    if (r && r.results && r.results.length > 0) {
+                        var pin = new Microsoft.Maps.Pushpin(r.results[0].location);
+                        map.entities.push(pin);
+                        map.setView({ bounds: r.results[0].bestView });
+                    }
+                },
+                errorCallback: function (e) {
+                    //If there is an error, alert the user about it.
+                    alert("No results found.");
+                }
+            };
+            //Make the geocode request.
+            searchManager.geocode(searchRequest);
+        }
+    }
+    </script>
+    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG' async defer></script>
+<div id="myMap" style="position:relative;width:350px;height:250px;"></div>
+  </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

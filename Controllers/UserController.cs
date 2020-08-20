@@ -10,23 +10,22 @@ using yyytours.Models;
 
 namespace yyytours.Controllers
 {
-    public class TripController : Controller
+    public class UserController : Controller
     {
         private readonly yyyWebProjContext _context;
 
-        public TripController(yyyWebProjContext context)
+        public UserController(yyyWebProjContext context)
         {
             _context = context;
         }
 
-        // GET: Trip
+        // GET: User
         public async Task<IActionResult> Index()
         {
-            var yyyWebProjContext = _context.Trip.Include(t => t.Guide).Include(t => t.Place);
-            return View(await yyyWebProjContext.ToListAsync());
+            return View(await _context.User.ToListAsync());
         }
 
-        // GET: Trip/Details/5
+        // GET: User/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -34,45 +33,43 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
-            var trip = await _context.Trip
-                .Include(t => t.Guide)
-                .Include(t => t.Place)
+            var user = await _context.User
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (trip == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(trip);
+            return View(user);
         }
 
-        // GET: Trip/Create
+        // GET: User/Create
         public IActionResult Create()
         {
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID");
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID");
             return View();
         }
 
-        // POST: Trip/Create
+        // POST: User/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
+        public async Task<IActionResult> Create([Bind("Email,FullName,Phone,Password,Type,ID")] User user)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(trip);
+                if(user.Type == default(UserType))
+                {
+                    user.Type = UserType.Tourist;
+                }
+                _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
-            return View(trip);
+            return View(user);
         }
 
-        // GET: Trip/Edit/5
+        // GET: User/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -80,24 +77,22 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
-            var trip = await _context.Trip.FindAsync(id);
-            if (trip == null)
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
-            return View(trip);
+            return View(user);
         }
 
-        // POST: Trip/Edit/5
+        // POST: User/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
+        public async Task<IActionResult> Edit(string id, [Bind("Email,FullName,Phone,Password,Type,ID")] User user)
         {
-            if (id != trip.ID)
+            if (id != user.ID)
             {
                 return NotFound();
             }
@@ -106,12 +101,12 @@ namespace yyytours.Controllers
             {
                 try
                 {
-                    _context.Update(trip);
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TripExists(trip.ID))
+                    if (!UserExists(user.ID))
                     {
                         return NotFound();
                     }
@@ -122,12 +117,10 @@ namespace yyytours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
-            return View(trip);
+            return View(user);
         }
 
-        // GET: Trip/Delete/5
+        // GET: User/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -135,32 +128,30 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
-            var trip = await _context.Trip
-                .Include(t => t.Guide)
-                .Include(t => t.Place)
+            var user = await _context.User
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (trip == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(trip);
+            return View(user);
         }
 
-        // POST: Trip/Delete/5
+        // POST: User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var trip = await _context.Trip.FindAsync(id);
-            _context.Trip.Remove(trip);
+            var user = await _context.User.FindAsync(id);
+            _context.User.Remove(user);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TripExists(string id)
+        private bool UserExists(string id)
         {
-            return _context.Trip.Any(e => e.ID == id);
+            return _context.User.Any(e => e.ID == id);
         }
     }
 }
