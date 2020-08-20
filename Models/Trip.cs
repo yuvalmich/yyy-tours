@@ -16,7 +16,7 @@ namespace yyytours.Models
         public Place Place { get; set; }
         [ForeignKey("Guide")]
         public string GuideId { get; set; }
-        public User Guide { get; set; } 
+        public User Guide { get; set; }
         public int Price { get; set; }
         public int Capacity { get; set; }
         public DateTime Date { get; set; }
@@ -27,20 +27,29 @@ namespace yyytours.Models
         {
         }
 
-        public string GetTripDayInHebrew()
+        public string GetTripDayInHebrew
         {
-            string[] days = {"ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"};
-            return days[(int)this.Date.DayOfWeek];
+            get
+            {
+                string[] days = { "ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת" };
+                return days[(int)this.Date.DayOfWeek];
+            }
         }
 
-        public DateTime GetEndDateTime()
+        public DateTime GetEndDateTime
         {
-            return this.Date.AddHours(this.TimeInHours);
+            get
+            {
+                return this.Date.AddHours(this.TimeInHours);
+            }
         }
 
-        public TimeSpan GetTimeToStart()
+        public TimeSpan GetTimeToStart
         {
-            return  this.Date.Date - DateTime.Today.Date;
+            get
+            {
+                return this.Date.Date - DateTime.Today.Date;
+            }
         }
     }
 }

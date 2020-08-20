@@ -1,0 +1,9 @@
+.jumbotron{
+    margin-bottom: 0px;
+    padding: 1em;
+}
+img#place{
+    object-fit: cover;
+    width: 100%;
+    height: 250px;
+}
