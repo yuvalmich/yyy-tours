@@ -6,8 +6,6 @@ namespace yyytours.Models
     public class User
     {  
         [Key]
-        public string ID { get; set; }
-
         [Required(ErrorMessage = "מייל אינו יכול להיות ריק")]
         [EmailAddress(ErrorMessage = "מייל אינו תקין")]
         public string Email { get; set; }

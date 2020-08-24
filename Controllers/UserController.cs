@@ -26,15 +26,15 @@ namespace yyytours.Controllers
         }
 
         // GET: User/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string email)
         {
-            if (id == null)
+            if (email == null)
             {
                 return NotFound();
             }
 
             var user = await _context.User
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Email == email);
             if (user == null)
             {
                 return NotFound();
@@ -46,6 +46,7 @@ namespace yyytours.Controllers
         // GET: User/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -54,7 +55,7 @@ namespace yyytours.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Email,FullName,Phone,Password,Type,ID")] User user)
+        public async Task<IActionResult> Create([Bind("Email,FullName,Phone,Password,Type")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -70,14 +71,14 @@ namespace yyytours.Controllers
         }
 
         // GET: User/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string email)
         {
-            if (id == null)
+            if (email == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.FindAsync(email);
             if (user == null)
             {
                 return NotFound();
@@ -90,9 +91,9 @@ namespace yyytours.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Email,FullName,Phone,Password,Type,ID")] User user)
+        public async Task<IActionResult> Edit(string email, [Bind("Email,FullName,Phone,Password,Type")] User user)
         {
-            if (id != user.ID)
+            if (email != user.Email)
             {
                 return NotFound();
             }
@@ -106,7 +107,7 @@ namespace yyytours.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.ID))
+                    if (!UserExists(user.Email))
                     {
                         return NotFound();
                     }
@@ -121,15 +122,15 @@ namespace yyytours.Controllers
         }
 
         // GET: User/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string email)
         {
-            if (id == null)
+            if (email == null)
             {
                 return NotFound();
             }
 
             var user = await _context.User
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Email == email);
             if (user == null)
             {
                 return NotFound();
@@ -141,17 +142,17 @@ namespace yyytours.Controllers
         // POST: User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string email)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.FindAsync(email);
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(string id)
+        private bool UserExists(string email)
         {
-            return _context.User.Any(e => e.ID == id);
+            return _context.User.Any(e => e.Email == email);
         }
     }
 }
