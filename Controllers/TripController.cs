@@ -58,8 +58,8 @@ namespace yyytours.Controllers
         // GET: Trip/Create
         public IActionResult Create()
         {
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID");
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID");
+            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View();
         }
 
