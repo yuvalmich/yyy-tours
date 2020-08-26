@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace yyytours.Models
@@ -33,6 +34,13 @@ namespace yyytours.Models
 
     public enum UserType
     {
-        Tourist = 0, Guide = 1, Admin = 2
+        [Description("טייל")]
+        Tourist,
+
+        [Description("מדריך")]
+        Guide,
+
+        [Description("מנהל")]
+        Admin
     }
 }
