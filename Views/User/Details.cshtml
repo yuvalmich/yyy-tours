@@ -1,15 +1,13 @@
-@model yyytours.Models.User
+﻿@model yyytours.Models.User
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "פרטי החשבון";
     Layout = "../Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<h1>פרטי החשבון</h1>
 
 <div>
-    <h4>User</h4>
-    <hr />
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
@@ -44,6 +42,7 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Email">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-email="@Model.Email" class="btn btn-primary">עריכה</a>
+    <br />
+    <a asp-action="Index">חזרה לרשימת המשתמשים</a>
 </div>
