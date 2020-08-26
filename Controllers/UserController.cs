@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -83,6 +85,7 @@ namespace yyytours.Controllers
             {
                 return NotFound();
             }
+            ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
 
@@ -118,6 +121,8 @@ namespace yyytours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
 
