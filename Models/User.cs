@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using yyytours.Controllers;
 
 namespace yyytours.Models
 {
@@ -30,6 +31,9 @@ namespace yyytours.Models
         public UserType Type { get; set; }
 
         public User() { }
+
+        public string GetUserTypeDescription => EnumSelect.GetEnumDescription<UserType>(this.Type);
+
     }
 
     public enum UserType

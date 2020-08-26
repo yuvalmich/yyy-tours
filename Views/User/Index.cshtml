@@ -1,15 +1,12 @@
-@model IEnumerable<yyytours.Models.User>
+﻿@model IEnumerable<yyytours.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "רשימת משתמשים";
     Layout = "../Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>רשימת משתמשים</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -47,12 +44,12 @@
                 @Html.DisplayFor(modelItem => item.Password)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Type)
+                @Html.DisplayFor(modelItem => item.GetUserTypeDescription)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-email="@item.Email">Edit</a> |
-                <a asp-action="Details" asp-route-email="@item.Email">Details</a> |
-                <a asp-action="Delete" asp-route-email="@item.Email">Delete</a>
+                <a asp-action="Edit" asp-route-email="@item.Email">עריכה</a> |
+                <a asp-action="Details" asp-route-email="@item.Email">פרטים</a> |
+                <a asp-action="Delete" asp-route-email="@item.Email">מחיקה</a>
             </td>
         </tr>
 }

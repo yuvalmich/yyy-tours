@@ -18,7 +18,7 @@ namespace yyytours.Controllers
             return new SelectList(values, "Id", "Name");
         }
 
-        private static string GetEnumDescription<TEnum>(TEnum value)
+        public static string GetEnumDescription<TEnum>(TEnum value)
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());
 
