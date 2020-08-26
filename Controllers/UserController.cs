@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Web;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using yyytours;
 using yyytours.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace yyytours.Controllers
 {
@@ -71,6 +73,40 @@ namespace yyytours.Controllers
             }
             return View(user);
         }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login([Bind("Email,Password")] User user)
+        {
+            var obj = _context.User.Where(a => a.Email.Equals(user.Email) && a.Password.Equals(user.Password)).FirstOrDefault();
+            if (obj != null)
+            {
+
+                HttpContext.Session.SetString("Email", obj.Email.ToString());
+                HttpContext.Session.SetString("FullName", obj.FullName.ToString());
+                HttpContext.Session.SetString("Type", obj.Type.ToString());
+                return RedirectToAction("Index");
+            } else
+            {
+                ModelState.AddModelError("LoginError", "אימייל וסיסמה אינם תואמים");
+            }
+
+            return View(user);
+        }
+
+        public ActionResult LogOut()
+        {
+            HttpContext.Session.Remove("Email");
+            HttpContext.Session.Remove("FullName");
+            HttpContext.Session.Remove("Type");
+            return View("../Home/Index");
+        }
+
 
         // GET: User/Edit/5
         public async Task<IActionResult> Edit(string email)

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http;
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="utf-8" />
@@ -25,15 +26,37 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="trip" asp-action="catalog">קטלוג טיולים</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="create">יצירת חשבון</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Index">ניהול משתמשים</a>
-                        </li>
+                        @if (Context.Session.GetString("FullName") == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="create">יצירת חשבון</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Login">התחברות</a>
+                            </li>
+                        }
+
+                        @if (Context.Session.GetString("FullName") != null)
+                        {
+
+                            @if (Context.Session.GetString("Type") == UserType.Admin.ToString())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Index">ניהול משתמשים</a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="LogOut">התנתקות</a>
+                            </li>
+
+                            <li>
+                                <a class="nav-link text-dark" style="font-weight: bold">שלום @Context.Session.GetString("FullName") </a>
+                            </li>
+                        }
                     </ul>
                 </div>
-            </div>
+            </div>  
         </nav>
     </header>
     <div class="container">
