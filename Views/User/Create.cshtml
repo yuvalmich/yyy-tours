@@ -15,6 +15,7 @@
                 <label asp-for="Email" class="control-label">מייל</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
+                <span class="text-danger">@Html.ValidationMessage("UserExistsError")</span>
             </div>
             <div class="form-group">
                 <label asp-for="FullName" class="control-label">שם מלא</label>
@@ -40,7 +41,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">כבר יש לך חשבון? כניסה לחשבון</a>
+    <a asp-action="Login">כבר יש לך חשבון? כניסה לחשבון</a>
 </div>
 
 @section Scripts {

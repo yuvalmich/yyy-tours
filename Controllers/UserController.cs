@@ -1,16 +1,9 @@
-﻿using System;
-using System.Web;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using yyytours;
+using System.Linq;
+using System.Threading.Tasks;
 using yyytours.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace yyytours.Controllers
 {
@@ -23,65 +16,60 @@ namespace yyytours.Controllers
             _context = context;
         }
 
-        // GET: User
+        #region users list
         public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
-            {
-                return View("NotAuthorized");   
-            }
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             return View(await _context.User.ToListAsync());
         }
+        #endregion
 
-        // GET: User/Details/5
+        #region user details
         public async Task<IActionResult> Details(string email)
         {
-            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
-            {
+            if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
-            }
-            if (email == null)
-            {
-                return View("NotFound");
-            }
 
-            var user = await _context.User
-                .FirstOrDefaultAsync(m => m.Email == email);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Email == email);
             if (user == null)
-            {
                 return View("NotFound");
-            }
 
             return View(user);
         }
+        #endregion
 
-        // GET: User/Create
+        #region create user
         public IActionResult Create()
         {
-
             return View();
         }
 
-        // POST: User/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Email,FullName,Phone,Password,Type")] User user)
         {
             if (ModelState.IsValid)
             {
-                if(user.Type == default(UserType))
+                if(UserExists(user.Email))
                 {
-                    user.Type = UserType.Tourist;
+                    ModelState.AddModelError("UserExistsError", "האימייל שבחרת תפוס");
+                    return View(user);
                 }
+                user.Type = UserType.Tourist;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+                                HttpContext.Session.SetString("Email", user.Email.ToString());
+                HttpContext.Session.SetString("FullName", user.FullName.ToString());
+                HttpContext.Session.SetInt32("Type", (int)user.Type);
                 return View("../Home/Index");
             }
             return View(user);
         }
+        #endregion
 
+        #region user login
         public ActionResult Login()
         {
             return View();
@@ -89,24 +77,25 @@ namespace yyytours.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login([Bind("Email,Password")] User user)
+        public ActionResult Login([Bind("Email,Password")] User reqUser)
         {
-            var obj = _context.User.Where(a => a.Email.Equals(user.Email) && a.Password.Equals(user.Password)).FirstOrDefault();
-            if (obj != null)
+            var user = _context.User.Where(user => user.Email.Equals(reqUser.Email) && user.Password.Equals(reqUser.Password)).FirstOrDefault();
+            if (user != null)
             {
-
-                HttpContext.Session.SetString("Email", obj.Email.ToString());
-                HttpContext.Session.SetString("FullName", obj.FullName.ToString());
-                HttpContext.Session.SetString("Type", obj.Type.ToString());
+                HttpContext.Session.SetString("Email", user.Email.ToString());
+                HttpContext.Session.SetString("FullName", user.FullName.ToString());
+                HttpContext.Session.SetInt32("Type", (int)user.Type);
                 return View("../Home/Index");
             } else
             {
                 ModelState.AddModelError("LoginError", "אימייל וסיסמה אינם תואמים");
             }
 
-            return View(user);
+            return View(reqUser);
         }
+        #endregion
 
+        #region user logout
         public ActionResult LogOut()
         {
             HttpContext.Session.Remove("Email");
@@ -114,40 +103,29 @@ namespace yyytours.Controllers
             HttpContext.Session.Remove("Type");
             return View("../Home/Index");
         }
+        #endregion
 
-
-        // GET: User/Edit/5
+        #region edit user
         public async Task<IActionResult> Edit(string email)
         {
-            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
-            {
+            if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
-            }
-            if (email == null)
-            {
-                return View("NotFound");
-            }
 
             var user = await _context.User.FindAsync(email);
             if (user == null)
-            {
                 return View("NotFound");
-            }
+
             ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
 
-        // POST: User/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string email, [Bind("Email,FullName,Phone,Password,Type")] User user)
         {
-            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
-            {
+            if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
-            }
+
             if (email != user.Email)
             {
                 return View("NotFound");
@@ -174,50 +152,53 @@ namespace yyytours.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
+        #endregion
 
-        // GET: User/Delete/5
+        #region delete user
         public async Task<IActionResult> Delete(string email)
         {
-            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
-            {
+            if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
-            }
-            if (email == null)
-            {
-                return View("NotFound");
-            }
 
-            var user = await _context.User
-                .FirstOrDefaultAsync(m => m.Email == email);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Email == email);
             if (user == null)
-            {
                 return View("NotFound");
-            }
 
             return View(user);
         }
 
-        // POST: User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string email)
         {
-            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
-            {
+            if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
-            }
+
             var user = await _context.User.FindAsync(email);
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
+        #region private methods
         private bool UserExists(string email)
         {
             return _context.User.Any(e => e.Email == email);
         }
+
+        private UserType? getSessionUserType()
+        {
+            if (!HttpContext.Session.Keys.Any(k => k.Equals("Type")))
+            {
+                return null;
+            }
+            return (UserType)HttpContext.Session.GetInt32("Type");
+        }
+        #endregion
+
     }
 }

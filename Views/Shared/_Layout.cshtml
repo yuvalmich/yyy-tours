@@ -39,7 +39,7 @@
                         @if (Context.Session.GetString("FullName") != null)
                         {
 
-                            @if (Context.Session.GetString("Type") == UserType.Admin.ToString())
+                            @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Index">ניהול משתמשים</a>
