@@ -26,22 +26,30 @@ namespace yyytours.Controllers
         // GET: User
         public async Task<IActionResult> Index()
         {
+            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
+            {
+                return View("NotAuthorized");   
+            }
             return View(await _context.User.ToListAsync());
         }
 
         // GET: User/Details/5
         public async Task<IActionResult> Details(string email)
         {
+            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
+            {
+                return View("NotAuthorized");
+            }
             if (email == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var user = await _context.User
                 .FirstOrDefaultAsync(m => m.Email == email);
             if (user == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             return View(user);
@@ -69,7 +77,7 @@ namespace yyytours.Controllers
                 }
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View("../Home/Index");
             }
             return View(user);
         }
@@ -90,7 +98,7 @@ namespace yyytours.Controllers
                 HttpContext.Session.SetString("Email", obj.Email.ToString());
                 HttpContext.Session.SetString("FullName", obj.FullName.ToString());
                 HttpContext.Session.SetString("Type", obj.Type.ToString());
-                return RedirectToAction("Index");
+                return View("../Home/Index");
             } else
             {
                 ModelState.AddModelError("LoginError", "אימייל וסיסמה אינם תואמים");
@@ -111,15 +119,19 @@ namespace yyytours.Controllers
         // GET: User/Edit/5
         public async Task<IActionResult> Edit(string email)
         {
+            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
+            {
+                return View("NotAuthorized");
+            }
             if (email == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var user = await _context.User.FindAsync(email);
             if (user == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
             ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
@@ -132,9 +144,13 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string email, [Bind("Email,FullName,Phone,Password,Type")] User user)
         {
+            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
+            {
+                return View("NotAuthorized");
+            }
             if (email != user.Email)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             if (ModelState.IsValid)
@@ -148,7 +164,7 @@ namespace yyytours.Controllers
                 {
                     if (!UserExists(user.Email))
                     {
-                        return NotFound();
+                        return View("NotFound");
                     }
                     else
                     {
@@ -165,16 +181,20 @@ namespace yyytours.Controllers
         // GET: User/Delete/5
         public async Task<IActionResult> Delete(string email)
         {
+            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
+            {
+                return View("NotAuthorized");
+            }
             if (email == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var user = await _context.User
                 .FirstOrDefaultAsync(m => m.Email == email);
             if (user == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             return View(user);
@@ -185,6 +205,10 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string email)
         {
+            if (HttpContext.Session.GetString("Type") != UserType.Admin.ToString())
+            {
+                return View("NotAuthorized");
+            }
             var user = await _context.User.FindAsync(email);
             _context.User.Remove(user);
             await _context.SaveChangesAsync();

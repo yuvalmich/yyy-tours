@@ -1,0 +1,10 @@
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    ViewData["Title"] = "אופס לא הצלחנו למצוא תשובה";
+}
+
+<h1>לא מצאנו תשובה</h1>
+
+<p>אין תשובה לבקשה שביצעת</p>
+
+<input type="button" value="חזרה לדף הבית" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'" />
