@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    ViewData["Title"] = "אופס איך הגעת לפה?";
+}
+
+<h1>פעולה לא חוקית</h1>
+
+<p>ניסית לגשת לדף שאינך מורשה אליו או שהמשתמש שלך התנתק</p>
+
+@if (Context.Session.GetString("FullName") == null)
+{
+    <input type="button" value="לכניסה לחשבון" class="btn btn-primary" onclick="location.href='@Url.Action("Login", "User")'" />
+}
+
+@if (Context.Session.GetString("FullName") != null)
+{
+    <input type="button" value="חזרה לדף הבית" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'" />
+}
