@@ -70,14 +70,15 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
         {
+            trip.ID = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
                 _context.Add(trip);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
+            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
 
@@ -94,8 +95,8 @@ namespace yyytours.Controllers
             {
                 return NotFound();
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
+            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
 
@@ -131,8 +132,8 @@ namespace yyytours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
+            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
 
