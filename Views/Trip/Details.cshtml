@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Http;
 @model Trip
 @{
     ViewData["Title"] = $"{Model.Place.Name} - {Model.DisplayName}";
@@ -22,11 +23,11 @@
         </tr>
         <tr>
             <td>@Html.DisplayNameFor(model=>model.Date):</td>
-            <td>יום @Html.DisplayFor(model=> model.GetTripDayInHebrew) ה- @Html.Display(Model.Date.ToShortDateString()) בשעה @Html.Display(Model.Date.ToShortTimeString())</td>
+            <td>יום @Html.DisplayFor(model=> model.GetTripDayInHebrew) ה- @Model.Date.ToShortDateString() בשעה @Model.Date.ToShortTimeString()</td>
         </tr>
         <tr>
             <td>@Html.DisplayNameFor(model=>model.TimeInHours):</td>
-            <td>@Html.DisplayFor(model=> model.TimeInHours) שעות (סיום משוער בשעה @Html.Display(Model.GetEndDateTime.ToShortTimeString()))</td>
+            <td>@Html.DisplayFor(model=> model.TimeInHours) שעות (סיום משוער בשעה @Model.GetEndDateTime.ToShortTimeString())</td>
         </tr>
         <tr>
             <td>@Html.DisplayNameFor(model=> model.Description):</td>
@@ -37,7 +38,7 @@
             <td>@Html.DisplayFor(model=> model.Price) ש״ח לאדם</td>
         </tr>
     </table>
-  <h3>מידע על האתר</h3>
+  <h3>מידע על המקום</h3>
   <div class="row">
     <div class="col-sm-8">
       <table class="table">
@@ -93,6 +94,10 @@
   </div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    @if (Context.Session.GetString("FullName") == null && (UserType)Context.Session.GetInt32("Type") == UserType.Admin)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a>
+    }
+    <a asp-action="Catalog">חזרה לקטלוג</a>
 </div>
