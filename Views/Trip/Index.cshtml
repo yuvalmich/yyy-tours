@@ -1,14 +1,14 @@
 @model IEnumerable<yyytours.Models.Trip>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "טיולים";
     Layout = "../Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>כל הטיולים</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">יצירת טיול חדש</a>
 </p>
 <table class="table">
     <thead>
@@ -50,7 +50,10 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Place.ID)
+                @Html.DisplayFor(modelItem => item.Place.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Guide.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
@@ -65,9 +68,9 @@
                 @Html.DisplayFor(modelItem => item.TimeInHours)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.ID">דף טיול</a> |
+                <a asp-action="Edit" asp-route-id="@item.ID">עריכה</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">מחיקה</a>
             </td>
         </tr>
 }
