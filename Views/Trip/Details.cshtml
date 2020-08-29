@@ -95,9 +95,12 @@
 </div>
 <div>
 
-    @if (Context.Session.GetString("FullName") == null && (UserType)Context.Session.GetInt32("Type") == UserType.Admin)
+    @if (Context.Session.GetString("FullName") != null)
     {
+      @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
+       {
         <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a>
+        }
     }
     <a asp-action="Catalog">חזרה לקטלוג</a>
 </div>
