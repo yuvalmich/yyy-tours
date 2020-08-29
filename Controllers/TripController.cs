@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -71,10 +71,19 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
         {
             trip.ID = Guid.NewGuid().ToString();
+
             if (ModelState.IsValid)
             {
                 _context.Add(trip);
                 await _context.SaveChangesAsync();
+
+                string[] postMessage = {
+                    trip.DisplayName,
+                    "תיאור  הטיול: " + trip.Description,
+                    "למידע נוסף והרשמה  לטיול: " + "http://localhost:4000/trip/Details/" + trip.ID
+                };
+                await FacebookApi.CreateFacebookPost(postMessage);
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
