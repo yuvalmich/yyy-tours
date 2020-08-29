@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Newtonsoft.Json;
+using System.Web.Mvc;
+using System.Linq.Expressions;
+using yyytours.Models;
 
 namespace yyytours.Controllers
 {
@@ -25,6 +29,19 @@ namespace yyytours.Controllers
             await response.Content.ReadAsStringAsync();
         }
 
+        public async static Task<FacebookPost[]> GetPagePosts()
+        {
+            HttpResponseMessage response = await client.GetAsync(facebookBaseUrl + facebookPageId + "/feed?access_token=" + facebookToken);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var postResponse = JsonConvert.DeserializeObject<IFacebookPostResponse>(responseBody);
+            return postResponse.data;
+        }
     }
 
+    public class IFacebookPostResponse
+    {
+        public FacebookPost[] data;
+        public object paging;
+    }
 }
