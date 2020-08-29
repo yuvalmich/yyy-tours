@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<yyytours.Models.FacebookPost>
+
+@{
     ViewData["Title"] = "דף הבית";
 }
 
@@ -24,6 +26,19 @@
             <p>הדלקת אש עם אבן אש</p>
             <video style="margin:20px;" width="310" height="180" controls> <source src="~/guideVideos/UsingFireStone.mp4" type="video/mp4"> </video>
         </div>
+    </div>
+</div>
+
+
+<div>
+    <h4>תוכן הפייסבוק שלנו</h4>
+    <div style="height: 250px; overflow: auto;" dir="rtl">
+        @foreach (var item in Model)
+        {
+        <div class="card" style="margin: 10px; padding: 10px; background: #a5d5f8">
+             @Html.Raw(item.message.Replace("\n", "<br />"))
+        </div>
+        }
     </div>
 </div>
 
