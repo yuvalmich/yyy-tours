@@ -1,11 +1,11 @@
-﻿@model IEnumerable<yyytours.Models.FacebookPost>
+@model IEnumerable<yyytours.Models.FacebookPost>
 
 @{
     ViewData["Title"] = "דף הבית";
 }
 
 <div class="text-center">
-    <h2>ברוכים הבאים ל YYYTours</h2>
+    <h2 class="main-title">ברוכים הבאים ל YYYTours</h2>
 </div>
 
 <div>
@@ -35,9 +35,9 @@
     <div style="height: 250px; overflow: auto;" dir="rtl">
         @foreach (var item in Model)
         {
-        <div class="card" style="margin: 10px; padding: 10px; background: #a5d5f8">
-             @Html.Raw(item.message.Replace("\n", "<br />"))
-        </div>
+            <div class="card facebook-post">
+                @Html.Raw(item.message.Replace("\n", "<br />"))
+            </div>
         }
     </div>
 </div>
