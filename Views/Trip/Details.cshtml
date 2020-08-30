@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Http;
 @model Trip
 @{
     ViewData["Title"] = $"{Model.Place.Name} - {Model.DisplayName}";
@@ -7,8 +8,8 @@
 }
 
 <div class="jumbotron jumbotron-fluid">
-  <h1>@Html.DisplayFor(model=> model.DisplayName)</h1> 
-      <p class="lead">@Html.Display(Model.Date.ToShortDateString())</p>
+    <h1>@Html.DisplayFor(model => model.DisplayName)</h1>
+    <p class="lead">@Html.Display(Model.Date.ToShortDateString())</p>
 </div>
 
 <img id="place" src="@Model.Place.ImageUrl" alt="">
@@ -18,41 +19,45 @@
     <table class="table">
         <tr>
             <td>שם המדריך: </td>
-            <td>@Html.DisplayFor(model=> model.Guide.FullName)</td>
+            <td>@Html.DisplayFor(model => model.Guide.FullName)</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=>model.Date):</td>
-            <td>יום @Html.DisplayFor(model=> model.GetTripDayInHebrew) ה- @Html.Display(Model.Date.ToShortDateString()) בשעה @Html.Display(Model.Date.ToShortTimeString())</td>
+            <td>@Html.DisplayNameFor(model => model.Date):</td>
+            <td>יום @Html.DisplayFor(model => model.GetTripDayInHebrew) ה- @Html.Display(Model.Date.ToShortDateString()) בשעה @Html.Display(Model.Date.ToShortTimeString())</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=>model.TimeInHours):</td>
-            <td>@Html.DisplayFor(model=> model.TimeInHours) שעות (סיום משוער בשעה @Html.Display(Model.GetEndDateTime.ToShortTimeString()))</td>
+            <td>@Html.DisplayNameFor(model => model.TimeInHours):</td>
+            <td>@Html.DisplayFor(model => model.TimeInHours) שעות (סיום משוער בשעה @Html.Display(Model.GetEndDateTime.ToShortTimeString()))</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=> model.Description):</td>
-            <td>@Html.DisplayFor(model=> model.Description)</td>
+            <td>@Html.DisplayNameFor(model => model.Description):</td>
+            <td>@Html.DisplayFor(model => model.Description)</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=> model.Price):</td>
-            <td>@Html.DisplayFor(model=> model.Price) ש״ח לאדם</td>
+            <td>@Html.DisplayNameFor(model => model.Price):</td>
+            <td>@Html.DisplayFor(model => model.Price) ש״ח לאדם</td>
         </tr>
     </table>
-  <h3>מידע על האתר</h3>
-  <div class="row">
-    <div class="col-sm-8">
-      <table class="table">
-          <tr>
-              <td>שם האתר:</td>
-              <td>@Html.DisplayFor(model=> model.Place.Name)</td>
-          </tr>
-          <tr>
-              <td>@Html.DisplayNameFor(model=>model.Place.Description): </td>
-              <td>@Html.DisplayFor(model=> model.Place.Description)</td>
-          </tr>
-      </table>
-    </div>
-  <div class="col-sm-4">
-      <script type='text/javascript'>
+    @if (Context.Session.GetString("FullName") != null)
+    {
+        <a asp-action="Register" asp-route-tripID="@Model.ID" asp-route-userEmail="@Context.Session.GetString("Email")">לחץ להירשם</a>
+    }
+        <h3>מידע על האתר</h3>
+        <div class="row">
+            <div class="col-sm-8">
+                <table class="table">
+                    <tr>
+                        <td>שם האתר:</td>
+                        <td>@Html.DisplayFor(model => model.Place.Name)</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Place.Description): </td>
+                        <td>@Html.DisplayFor(model => model.Place.Description)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-4">
+                <script type='text/javascript'>
     var map, searchManager;
     function GetMap() {
         map = new Microsoft.Maps.Map('#myMap', {});
@@ -87,12 +92,12 @@
             searchManager.geocode(searchRequest);
         }
     }
-    </script>
-    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG' async defer></script>
-<div id="myMap" style="position:relative;width:350px;height:250px;"></div>
-  </div>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+                </script>
+                <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG' async defer></script>
+                <div id="myMap" style="position:relative;width:350px;height:250px;"></div>
+            </div>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+            <a asp-action="Index">Back to List</a>
+        </div>
