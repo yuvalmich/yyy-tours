@@ -76,8 +76,17 @@ body {
 }
 
 .main-title {
-    text-shadow: 10px;
+    text-shadow: 1px 1px #808080;
     font-family: Arial;
+    font-weight: bold;
+    font-size: 30px;
+    color: black;
+    transition: color 2s, font-size 2s;
+}
+
+.main-title:hover {
+    font-size: 40px;
+    color: darkblue;
 }
 
 .facebook-post {
@@ -90,3 +99,10 @@ body {
 .mult-col {
     column-count: 2;
 }
+
+video {
+    margin: 20px;
+    width: 310px;
+    height: 180px;
+}
+
