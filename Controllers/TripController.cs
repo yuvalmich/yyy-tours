@@ -46,6 +46,38 @@ namespace yyytours.Controllers
             return View(trip);
         }
 
+        public async Task<IActionResult> Register(string tripID, string userEmail)
+        {
+            if(tripID == null)
+            {
+                return NotFound();
+            }
+
+            if(userEmail == null || userEmail.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            var registeredUser = await _context.TripRegistration
+                .Where(tr => ((tr.TripId == tripID) && (tr.UserEmail == userEmail))).ToListAsync();
+
+            if(registeredUser != null)
+            {
+                // Change here to navigate to already registered page
+                return BadRequest();
+            }
+
+            var tripReg = new TripRegistration();
+            tripReg.TripId = tripID;
+            tripReg.UserEmail = userEmail;
+            tripReg.RegistrationDateTime = DateTime.Now;
+
+            _context.Add(tripReg);
+            await _context.SaveChangesAsync();
+
+            return View("../Home/Index");
+        }
+
         public async Task<IActionResult> Catalog()
     {
         var trips = await _context.Trip
