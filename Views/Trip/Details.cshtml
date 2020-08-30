@@ -16,44 +16,45 @@
 
 <div class="container">
     <h3>מידע על הטיול</h3>
+    <canvas id="myCanvas" width="100" height="50"> </canvas>
     <table class="table">
         <tr>
             <td>שם המדריך: </td>
-            <td>@Html.DisplayFor(model=> model.Guide.FullName)</td>
+            <td>@Html.DisplayFor(model => model.Guide.FullName)</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=>model.Date):</td>
-            <td>יום @Html.DisplayFor(model=> model.GetTripDayInHebrew) ה- @Model.Date.ToShortDateString() בשעה @Model.Date.ToShortTimeString()</td>
+            <td>@Html.DisplayNameFor(model => model.Date):</td>
+            <td>יום @Html.DisplayFor(model => model.GetTripDayInHebrew) ה- @Model.Date.ToShortDateString() בשעה @Model.Date.ToShortTimeString()</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=>model.TimeInHours):</td>
-            <td>@Html.DisplayFor(model=> model.TimeInHours) שעות (סיום משוער בשעה @Model.GetEndDateTime.ToShortTimeString())</td>
+            <td>@Html.DisplayNameFor(model => model.TimeInHours):</td>
+            <td>@Html.DisplayFor(model => model.TimeInHours) שעות (סיום משוער בשעה @Model.GetEndDateTime.ToShortTimeString())</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=> model.Description):</td>
-            <td>@Html.DisplayFor(model=> model.Description)</td>
+            <td>@Html.DisplayNameFor(model => model.Description):</td>
+            <td>@Html.DisplayFor(model => model.Description)</td>
         </tr>
         <tr>
-            <td>@Html.DisplayNameFor(model=> model.Price):</td>
-            <td>@Html.DisplayFor(model=> model.Price) ש״ח לאדם</td>
+            <td>@Html.DisplayNameFor(model => model.Price):</td>
+            <td>@Html.DisplayFor(model => model.Price) ש״ח לאדם</td>
         </tr>
     </table>
-  <h3>מידע על המקום</h3>
-  <div class="row">
-    <div class="col-sm-8">
-      <table class="table">
-          <tr>
-              <td>שם האתר:</td>
-              <td>@Html.DisplayFor(model=> model.Place.Name)</td>
-          </tr>
-          <tr>
-              <td>@Html.DisplayNameFor(model=>model.Place.Description): </td>
-              <td>@Html.DisplayFor(model=> model.Place.Description)</td>
-          </tr>
-      </table>
-    </div>
-  <div class="col-sm-4">
-      <script type='text/javascript'>
+    <h3>מידע על המקום</h3>
+    <div class="row">
+        <div class="col-sm-8">
+            <table class="table">
+                <tr>
+                    <td>שם האתר:</td>
+                    <td>@Html.DisplayFor(model => model.Place.Name)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Place.Description): </td>
+                    <td class="mult-col">@Html.DisplayFor(model => model.Place.Description)</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-4">
+            <script type='text/javascript'>
     var map, searchManager;
     function GetMap() {
         map = new Microsoft.Maps.Map('#myMap', {});
@@ -88,19 +89,36 @@
             searchManager.geocode(searchRequest);
         }
     }
-    </script>
-    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG' async defer></script>
-<div id="myMap" style="position:relative;width:350px;height:250px;"></div>
-  </div>
-</div>
-<div>
+            </script>
+            <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG' async defer></script>
+            <div id="myMap" style="position:relative;width:350px;height:250px;"></div>
+        </div>
+    </div>
+    <div>
 
-    @if (Context.Session.GetString("FullName") != null)
-    {
-      @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
-       {
-        <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a>
+        @if (Context.Session.GetString("FullName") != null)
+        {
+            @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a>
+            }
         }
-    }
-    <a asp-action="Catalog">חזרה לקטלוג</a>
-</div>
+        <a asp-action="Catalog">חזרה לקטלוג</a>
+    </div>
+
+
+<script>
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var difficulty = @Model.TimeInHours > 4 ? "רמת קושי גבוהה" : "רמת קושי נמוכה";
+    c.title = difficulty;
+    // Create gradient
+    var grd = ctx.createLinearGradient(0, 0, 200, 0);
+    var color = @Model.TimeInHours > 4 ? "red" : "green";
+
+    grd.addColorStop(0, color);
+
+    // Fill with gradient
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, 100, 50);
+</script>
