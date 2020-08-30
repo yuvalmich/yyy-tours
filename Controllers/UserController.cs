@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using yyytours.Models;
@@ -17,12 +18,21 @@ namespace yyytours.Controllers
         }
 
         #region users list
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
 
-            return View(await _context.User.ToListAsync());
+            var users = await _context.User.ToListAsync();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(s => s.FullName.Contains(searchString)
+                                       || s.Phone.Contains(searchString)
+                                       || s.Email.Contains(searchString)).ToList();
+            }
+
+            return View(users);
         }
         #endregion
 
@@ -63,7 +73,7 @@ namespace yyytours.Controllers
                                 HttpContext.Session.SetString("Email", user.Email.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName.ToString());
                 HttpContext.Session.SetInt32("Type", (int)user.Type);
-                return View("../Home/Index");
+                return RedirectToAction("Index", "Home");
             }
             return View(user);
         }
@@ -85,7 +95,7 @@ namespace yyytours.Controllers
                 HttpContext.Session.SetString("Email", user.Email.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName.ToString());
                 HttpContext.Session.SetInt32("Type", (int)user.Type);
-                return View("../Home/Index");
+                return RedirectToAction("Index", "Home");
             } else
             {
                 ModelState.AddModelError("LoginError", "אימייל וסיסמה אינם תואמים");
@@ -101,7 +111,7 @@ namespace yyytours.Controllers
             HttpContext.Session.Remove("Email");
             HttpContext.Session.Remove("FullName");
             HttpContext.Session.Remove("Type");
-            return View("../Home/Index");
+            return RedirectToAction("Index", "Home");
         }
         #endregion
 
