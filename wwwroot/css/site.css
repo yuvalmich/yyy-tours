@@ -86,3 +86,7 @@ body {
     border-radius: 7px;
     background: #a5d5f8;
 }
+
+.mult-col {
+    column-count: 2;
+}
