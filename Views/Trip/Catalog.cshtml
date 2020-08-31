@@ -8,6 +8,15 @@
 
 <div class="container">
     <h1>קטלוג הטיולים</h1>
+    <form asp-action="Catalog" method="get">
+    <div class="form-actions no-color">
+        <p>
+             חיפוש: <input type="text" placeholder="חיפוש לפי שם טיול, מקום ומדריך" autocomplete="off" name="SearchString" class="form-control" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="חיפוש" class="btn btn-primary" /> |
+            <a asp-action="Catalog">חזרה לרשימה מלאה</a>
+        </p>
+    </div>
+</form>
     <div class="row row-cols-1 row-cols-md-3">
     @foreach (var item in Model)
 {
