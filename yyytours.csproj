@@ -18,5 +18,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.1" />
+    <PackageReference Include="OpenWeatherMap.Standard" Version="1.3.0" />
   </ItemGroup>
 </Project>

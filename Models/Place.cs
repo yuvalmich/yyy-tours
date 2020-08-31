@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace yyytours.Models
 {
@@ -14,7 +15,10 @@ namespace yyytours.Models
         [Display(Name = "כתובת לתמונה")]
         public string ImageUrl { get; set; } 
         [Display(Name = "מדינה")]
-        public string Country { get; set; }   
+        public string Country { get; set; }
+        [NotMapped]
+        [Display(Name = "מזג אוויר כעת")]
+        public float Wethear { get; set; }
 
         public Place()
         {

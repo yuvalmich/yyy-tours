@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OpenWeatherMap.Standard;
+using OpenWeatherMap.Standard.Enums;
 using yyytours;
 using yyytours.Models;
 
@@ -43,6 +45,12 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
+            Current currentWeather = new Current("5572d59340b8fe8f0f32b4f5f6e2d57b", WeatherUnits.Metric);
+            var weatherData = await currentWeather.GetWeatherDataByCityName(trip.Place.Name);
+            if(weatherData != null)
+            {
+                trip.Place.Wethear = weatherData.WeatherDayInfo.Temperature;
+            }
             return View(trip);
         }
 
