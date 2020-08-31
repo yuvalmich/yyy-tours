@@ -58,7 +58,7 @@ namespace yyytours.Controllers
         // GET: Trip/Create
         public IActionResult Create()
         {
-            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View();
         }
@@ -104,7 +104,7 @@ namespace yyytours.Controllers
             {
                 return NotFound();
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
