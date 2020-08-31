@@ -23,16 +23,16 @@ namespace yyytours.Controllers
             if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
 
-            var users = await _context.User.ToListAsync();
+            IQueryable<User> users = _context.User;
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 users = users.Where(s => s.FullName.Contains(searchString)
                                        || s.Phone.Contains(searchString)
-                                       || s.Email.Contains(searchString)).ToList();
+                                       || s.Email.Contains(searchString));
             }
 
-            return View(users);
+            return View(await users.ToListAsync());
         }
         #endregion
 

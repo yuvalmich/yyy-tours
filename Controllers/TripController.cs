@@ -54,19 +54,30 @@ namespace yyytours.Controllers
             return View(trip);
         }
 
-        public async Task<IActionResult> Catalog()
+        public async Task<IActionResult> Catalog(string searchString)
     {
-        var trips = await _context.Trip
+        IQueryable<Trip> trips = _context.Trip
                 .Include(t => t.Guide)
                 .Include(t => t.Place)
-                .Where(i=>i.Date > DateTime.Now).OrderBy(i=>i.Date).ToListAsync();
-        return View("catalog", trips);
+                .Where(i=>i.Date > DateTime.Now).OrderBy(i=>i.Date);
+
+        if (!String.IsNullOrEmpty(searchString))
+        {
+            var split = searchString.Split(' ');
+            foreach (var word in split)
+            {
+                trips = trips.Where(i=> i.DisplayName.Contains(word) || i.Place.Name.Contains(word)
+                || i.Guide.FullName.Contains(word));
+            }
+            
+        }
+        return View("catalog", await trips.ToListAsync());
     }
 
         // GET: Trip/Create
         public IActionResult Create()
         {
-            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View();
         }
@@ -112,7 +123,7 @@ namespace yyytours.Controllers
             {
                 return NotFound();
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
