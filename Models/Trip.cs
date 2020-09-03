@@ -21,14 +21,12 @@ namespace yyytours.Models
         [ForeignKey("Place")]
         public string PlaceId { get; set; }
         [Display(Name = "מיקום")]
-        [Required(ErrorMessage = "מיקום אינו יכול להיות ריק")]
         public Place Place { get; set; }
         [ForeignKey("Guide")]
         [Display(Name = "מדריך")]
         [Required(ErrorMessage = "מדריך אינו יכול להיות ריק")]
         public string GuideId { get; set; }
         [Display(Name = "מדריך")]
-        [Required(ErrorMessage = "מדריך אינו יכול להיות ריק")]
         public User Guide { get; set; }
         [Display(Name = "מחיר")]
         [Required(ErrorMessage = "מחיר אינו יכול להיות ריק")]
