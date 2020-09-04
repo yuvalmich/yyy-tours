@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model yyytours.Models.TripRegistration
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Context.Session.GetString("FullName") != null)
+{
+    <h1>הסרת השתתפות בטיול</h1>
+
+    <h3>האם אתה בטוח שברצונך להסיר את השתתפותך בטיול?</h3>
+    <div>
+        <h4>פרטי הטיול</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                שם הטיול
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => modelItem.Trip.DisplayName)
+            </dd>
+            <dt class="col-sm-2">
+                מיקום הטיול
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => modelItem.Trip.Place.Name)
+            </dd>
+            <dt class="col-sm-2">
+                תאריך ושעת הטיול
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => modelItem.Trip.Date)
+            </dd>
+            <dt class="col-sm-2">
+                מחיר הטיול
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => modelItem.Trip.Price) ש"ח
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="ID" />
+            <input type="submit" value="הסרת השתתפות" class="btn btn-danger" /> |
+            <a asp-action="Index">חזרה לטיולים שלי</a>
+        </form>
+    </div>
+}
+else
+{
+    <h1>פעולה לא חוקית</h1>
+
+    <p>ניסית לגשת לדף שאינך מורשה אליו או שהמשתמש שלך התנתק</p>
+
+    <input type="button" value="לכניסה לחשבון" class="btn btn-primary" onclick="location.href='@Url.Action("Login", "User")'" />
+
+    <input type="button" value="חזרה לדף הבית" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'" />
+
+}
