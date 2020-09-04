@@ -35,9 +35,21 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Login">התחברות</a>
                             </li>
                         }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="TripRegistration" asp-action="Index">טיולים שלי</a>
+                            </li>
+                        }
 
                         @if (Context.Session.GetString("FullName") != null)
                         {
+                            //@if ((UserType)Context.Session.GetInt32("Type") == UserType.Guide)
+                            //{
+                            //    <li class="nav-item">
+                            //        <a class="nav-link text-dark" asp-area="" asp-controller="TripRegistration" asp-action="GuideTrips">משתתפי הטיולים שלי</a>
+                            //    </li>
+                            //}
 
                             @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
                             {
