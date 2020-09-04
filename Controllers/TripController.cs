@@ -9,6 +9,7 @@ using OpenWeatherMap.Standard;
 using OpenWeatherMap.Standard.Enums;
 using yyytours;
 using yyytours.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace yyytours.Controllers
 {
@@ -24,6 +25,9 @@ namespace yyytours.Controllers
         // GET: Trip
         public async Task<IActionResult> Index()
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+                
             var yyyWebProjContext = _context.Trip.Include(t => t.Guide).Include(t => t.Place);
             return View(await yyyWebProjContext.ToListAsync());
         }
@@ -77,6 +81,9 @@ namespace yyytours.Controllers
         // GET: Trip/Create
         public IActionResult Create()
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View();
@@ -89,6 +96,9 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             trip.ID = Guid.NewGuid().ToString();
 
             if (ModelState.IsValid)
@@ -113,6 +123,9 @@ namespace yyytours.Controllers
         // GET: Trip/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             if (id == null)
             {
                 return NotFound();
@@ -135,6 +148,9 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             if (id != trip.ID)
             {
                 return NotFound();
@@ -168,6 +184,9 @@ namespace yyytours.Controllers
         // GET: Trip/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             if (id == null)
             {
                 return NotFound();
@@ -190,6 +209,9 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+                
             var trip = await _context.Trip.FindAsync(id);
             _context.Trip.Remove(trip);
             await _context.SaveChangesAsync();
@@ -199,6 +221,15 @@ namespace yyytours.Controllers
         private bool TripExists(string id)
         {
             return _context.Trip.Any(e => e.ID == id);
+        }
+
+        private UserType? getSessionUserType()
+        {
+            if (!HttpContext.Session.Keys.Any(k => k.Equals("Type")))
+            {
+                return null;
+            }
+            return (UserType)HttpContext.Session.GetInt32("Type");
         }
     }
 }
