@@ -40,7 +40,10 @@
     </table>
     @if (Context.Session.GetString("FullName") != null)
     {
-        <a asp-action="Register" asp-route-tripID="@Model.ID" asp-route-userEmail="@Context.Session.GetString("Email")">לחץ להירשם</a>
+        <div>
+    להרשמה לטיול לחץ 
+        <a asp-action="Register" asp-route-tripID="@Model.ID" asp-route-userEmail="@Context.Session.GetString("Email")">כאן</a>
+    </div>
     }
         <h3>מידע על האתר</h3>
         <div class="row">

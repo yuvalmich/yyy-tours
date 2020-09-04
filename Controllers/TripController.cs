@@ -48,26 +48,21 @@ namespace yyytours.Controllers
 
         public async Task<IActionResult> Register(string tripID, string userEmail)
         {
-            if(tripID == null)
-            {
-                return NotFound();
-            }
-
-            if(userEmail == null || userEmail.Length == 0)
+            if(tripID == null || tripID == "" || userEmail == null || userEmail.Length == 0)
             {
                 return BadRequest();
             }
 
             var registeredUser = await _context.TripRegistration
-                .Where(tr => ((tr.TripId == tripID) && (tr.UserEmail == userEmail))).ToListAsync();
+                .Where(tr => tr.TripId == tripID).Where(tr => tr.UserEmail == userEmail).ToListAsync();
 
-            if(registeredUser != null)
+            if(registeredUser.Count != 0)
             {
-                // Change here to navigate to already registered page
-                return BadRequest();
+                return View("../TripRegistration/RegistrationExist");
             }
 
             var tripReg = new TripRegistration();
+            tripReg.ID = Guid.NewGuid().ToString();
             tripReg.TripId = tripID;
             tripReg.UserEmail = userEmail;
             tripReg.RegistrationDateTime = DateTime.Now;
@@ -75,7 +70,7 @@ namespace yyytours.Controllers
             _context.Add(tripReg);
             await _context.SaveChangesAsync();
 
-            return View("../Home/Index");
+            return View("../TripRegistration/RegistrationSuccess");
         }
 
         public async Task<IActionResult> Catalog()
