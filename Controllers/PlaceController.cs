@@ -114,6 +114,10 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
+            if(_context.Trip.Any(i=>i.PlaceId == id))
+            {
+                return BadRequest("אין אפשרות למחוק מיקום אשר קיימים טיולים בו");
+            }
             return View(place);
         }
 
