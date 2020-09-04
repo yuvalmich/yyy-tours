@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -141,7 +141,14 @@ namespace yyytours.Controllers
                 return View("NotFound");
             }
 
-            if (ModelState.IsValid)
+            bool userTypeNotValid = _context.Trip.Count(t => t.GuideId == email) > 0 && user.Type == UserType.Tourist;
+
+            if (userTypeNotValid)
+            {
+                ModelState.AddModelError("UserTypeError", "לא ניתן לשנות מדריך עם טיולים לטייל");
+            }
+
+            if (ModelState.IsValid && !userTypeNotValid)
             {
                 try
                 {
@@ -162,6 +169,7 @@ namespace yyytours.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
         #endregion
