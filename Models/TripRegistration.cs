@@ -15,6 +15,8 @@ namespace yyytours.Models
         [ForeignKey("User")]
         public string UserEmail { get; set; }
         public DateTime RegistrationDateTime { get; set; }
+        public User User { get; set; }
+        public Trip Trip { get; set; }
 
         
         public TripRegistration() { }
