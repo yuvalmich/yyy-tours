@@ -32,9 +32,6 @@ namespace yyytours.Models
         [Required(ErrorMessage = "מחיר אינו יכול להיות ריק")]
         [Range(0, double.MaxValue)]
         public int Price { get; set; }
-        [Display(Name = "תפוסה")]
-        [Required(ErrorMessage = "תפוסה אינו יכול להיות ריק")]
-        public int Capacity { get; set; }
         [Display(Name = "תאריך ושעה")]
         [Required(ErrorMessage = "תאריך ושעת הטיול אינו יכול להיות ריק")]
         public DateTime Date { get; set; }
