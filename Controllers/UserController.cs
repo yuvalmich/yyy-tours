@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -195,6 +195,10 @@ namespace yyytours.Controllers
                 return View("NotAuthorized");
 
             var user = await _context.User.FindAsync(email);
+
+            if (user == null)
+                return View("NotFound");
+
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
 
