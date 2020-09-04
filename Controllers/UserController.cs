@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using yyytours.Models;
@@ -17,12 +18,21 @@ namespace yyytours.Controllers
         }
 
         #region users list
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             if (getSessionUserType() != UserType.Admin)
                 return View("NotAuthorized");
 
-            return View(await _context.User.ToListAsync());
+            IQueryable<User> users = _context.User;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(s => s.FullName.Contains(searchString)
+                                       || s.Phone.Contains(searchString)
+                                       || s.Email.Contains(searchString));
+            }
+
+            return View(await users.ToListAsync());
         }
         #endregion
 
@@ -63,7 +73,7 @@ namespace yyytours.Controllers
                                 HttpContext.Session.SetString("Email", user.Email.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName.ToString());
                 HttpContext.Session.SetInt32("Type", (int)user.Type);
-                return View("../Home/Index");
+                return RedirectToAction("Index", "Home");
             }
             return View(user);
         }
@@ -85,7 +95,7 @@ namespace yyytours.Controllers
                 HttpContext.Session.SetString("Email", user.Email.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName.ToString());
                 HttpContext.Session.SetInt32("Type", (int)user.Type);
-                return View("../Home/Index");
+                return RedirectToAction("Index", "Home");
             } else
             {
                 ModelState.AddModelError("LoginError", "אימייל וסיסמה אינם תואמים");
@@ -101,7 +111,7 @@ namespace yyytours.Controllers
             HttpContext.Session.Remove("Email");
             HttpContext.Session.Remove("FullName");
             HttpContext.Session.Remove("Type");
-            return View("../Home/Index");
+            return RedirectToAction("Index", "Home");
         }
         #endregion
 
@@ -131,7 +141,14 @@ namespace yyytours.Controllers
                 return View("NotFound");
             }
 
-            if (ModelState.IsValid)
+            bool userTypeNotValid = _context.Trip.Count(t => t.GuideId == email) > 0 && user.Type == UserType.Tourist;
+
+            if (userTypeNotValid)
+            {
+                ModelState.AddModelError("UserTypeError", "לא ניתן לשנות מדריך עם טיולים לטייל");
+            }
+
+            if (ModelState.IsValid && !userTypeNotValid)
             {
                 try
                 {
@@ -152,6 +169,7 @@ namespace yyytours.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
         #endregion
@@ -177,6 +195,27 @@ namespace yyytours.Controllers
                 return View("NotAuthorized");
 
             var user = await _context.User.FindAsync(email);
+
+            if (user == null)
+                return View("NotFound");
+
+            bool isGuideTours = _context.Trip.Count(t => t.GuideId == email) > 0;
+            // todo: when assa finish registration, add 
+            //  isSignToTours = _context.TripRegistration.Count(r => r.userEmail == email) > 0;
+            bool isSignToTours = false;
+
+            if (isGuideTours)
+            {
+                ModelState.AddModelError("userGuideTours", "לא ניתן למחוק מדריך שמדריך טיולים עתידיים");
+                return View(user);
+            }
+
+            if (isSignToTours)
+            {
+                ModelState.AddModelError("userSignToTours", "לא ניתן למחוק משתמש שרשום לטיולים");
+                return View(user);
+            }
+
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
 

@@ -74,3 +74,43 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.main-title {
+    text-shadow: 1px 1px #808080;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 30px;
+    color: black;
+    transition: color 2s, font-size 2s;
+}
+
+.main-title:hover {
+    font-size: 40px;
+    color: darkblue;
+}
+
+.facebook-post {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 7px;
+    background: #a5d5f8;
+}
+
+.mult-col {
+    column-count: 2;
+}
+
+video {
+    margin: 20px;
+    width: 310px;
+    height: 180px;
+}
+
+
+.tech-help {
+    padding: 15px;
+    font-style: italic;
+    background-color: lightgray;
+    position: absolute;
+    left: 15px;
+}

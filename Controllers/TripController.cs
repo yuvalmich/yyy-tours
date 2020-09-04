@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OpenWeatherMap.Standard;
+using OpenWeatherMap.Standard.Enums;
 using yyytours;
 using yyytours.Models;
 
@@ -43,9 +45,14 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
+            Current currentWeather = new Current("5572d59340b8fe8f0f32b4f5f6e2d57b", WeatherUnits.Metric);
+            var weatherData = await currentWeather.GetWeatherDataByCityName(trip.Place.Name);
+            if(weatherData != null)
+            {
+                trip.Place.Wethear = weatherData.WeatherDayInfo.Temperature;
+            }
             return View(trip);
         }
-
         public async Task<IActionResult> Register(string tripID, string userEmail)
         {
             if(tripID == null || tripID == "" || userEmail == null || userEmail.Length == 0)
@@ -72,20 +79,30 @@ namespace yyytours.Controllers
 
             return View("../TripRegistration/RegistrationSuccess");
         }
-
-        public async Task<IActionResult> Catalog()
+        public async Task<IActionResult> Catalog(string searchString)
     {
-        var trips = await _context.Trip
+        IQueryable<Trip> trips = _context.Trip
                 .Include(t => t.Guide)
                 .Include(t => t.Place)
-                .Where(i=>i.Date > DateTime.Now).OrderBy(i=>i.Date).ToListAsync();
-        return View("catalog", trips);
+                .Where(i=>i.Date > DateTime.Now).OrderBy(i=>i.Date);
+
+        if (!String.IsNullOrEmpty(searchString))
+        {
+            var split = searchString.Split(' ');
+            foreach (var word in split)
+            {
+                trips = trips.Where(i=> i.DisplayName.Contains(word) || i.Place.Name.Contains(word)
+                || i.Guide.FullName.Contains(word));
+            }
+            
+        }
+        return View("catalog", await trips.ToListAsync());
     }
 
         // GET: Trip/Create
         public IActionResult Create()
         {
-            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View();
         }
@@ -95,16 +112,26 @@ namespace yyytours.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
+        public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
+            trip.ID = Guid.NewGuid().ToString();
+
             if (ModelState.IsValid)
             {
                 _context.Add(trip);
                 await _context.SaveChangesAsync();
+
+                string[] postMessage = {
+                    trip.DisplayName,
+                    "תיאור  הטיול: " + trip.Description,
+                    "למידע נוסף והרשמה  לטיול: " + "http://localhost:4000/trip/Details/" + trip.ID
+                };
+                await FacebookApi.CreateFacebookPost(postMessage);
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
+            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
 
@@ -121,8 +148,8 @@ namespace yyytours.Controllers
             {
                 return NotFound();
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
 
@@ -131,7 +158,7 @@ namespace yyytours.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Capacity,Date,TimeInHours")] Trip trip)
+        public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
             if (id != trip.ID)
             {
@@ -158,8 +185,8 @@ namespace yyytours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuideId"] = new SelectList(_context.User, "ID", "ID", trip.GuideId);
-            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "ID", trip.PlaceId);
+            ViewData["GuideId"] = new SelectList(_context.User, "Email", "FullName");
+            ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
 

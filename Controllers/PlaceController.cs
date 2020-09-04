@@ -25,24 +25,6 @@ namespace yyytours.Controllers
             return View(await _context.Place.ToListAsync());
         }
 
-        // GET: Place/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var place = await _context.Place
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (place == null)
-            {
-                return NotFound();
-            }
-
-            return View(place);
-        }
-
         // GET: Place/Create
         public IActionResult Create()
         {
@@ -56,6 +38,7 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
+            place.ID = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
                 _context.Add(place);

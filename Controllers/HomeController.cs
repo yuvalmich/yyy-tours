@@ -18,9 +18,10 @@ namespace yyytours.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var posts = await FacebookApi.GetPagePosts();
+            return View(posts);
         }
 
         public IActionResult Privacy()
