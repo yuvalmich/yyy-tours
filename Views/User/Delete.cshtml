@@ -47,5 +47,8 @@
         <input type="submit" value="מחיקה" class="btn btn-danger" />
         <br />
         <a asp-action="Index">חזרה לרשימת משתמשים</a>
+        <br />
+        <span class="text-danger">@Html.ValidationMessage("userSignToTours")</span>
+        <span class="text-danger">@Html.ValidationMessage("userGuideTours")</span>
     </form>
 </div>
