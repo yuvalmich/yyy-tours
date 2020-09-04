@@ -141,7 +141,14 @@ namespace yyytours.Controllers
                 return View("NotFound");
             }
 
-            if (ModelState.IsValid)
+            bool userTypeNotValid = _context.Trip.Count(t => t.GuideId == email) > 0 && user.Type == UserType.Tourist;
+
+            if (userTypeNotValid)
+            {
+                ModelState.AddModelError("UserTypeError", "לא ניתן לשנות מדריך עם טיולים לטייל");
+            }
+
+            if (ModelState.IsValid && !userTypeNotValid)
             {
                 try
                 {
@@ -162,6 +169,7 @@ namespace yyytours.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["Type"] = EnumSelect.ToSelectList<UserType>();
             return View(user);
         }
         #endregion
@@ -187,6 +195,27 @@ namespace yyytours.Controllers
                 return View("NotAuthorized");
 
             var user = await _context.User.FindAsync(email);
+
+            if (user == null)
+                return View("NotFound");
+
+            bool isGuideTours = _context.Trip.Count(t => t.GuideId == email) > 0;
+            // todo: when assa finish registration, add 
+            //  isSignToTours = _context.TripRegistration.Count(r => r.userEmail == email) > 0;
+            bool isSignToTours = false;
+
+            if (isGuideTours)
+            {
+                ModelState.AddModelError("userGuideTours", "לא ניתן למחוק מדריך שמדריך טיולים עתידיים");
+                return View(user);
+            }
+
+            if (isSignToTours)
+            {
+                ModelState.AddModelError("userSignToTours", "לא ניתן למחוק משתמש שרשום לטיולים");
+                return View(user);
+            }
+
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
 
