@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using yyytours;
 using yyytours.Models;
+using Microsoft.AspNetCore.Http;
+
 
 namespace yyytours.Controllers
 {
@@ -22,12 +24,17 @@ namespace yyytours.Controllers
         // GET: Place
         public async Task<IActionResult> Index()
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+                
             return View(await _context.Place.ToListAsync());
         }
 
         // GET: Place/Create
         public IActionResult Create()
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
             return View();
         }
 
@@ -38,6 +45,8 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
             place.ID = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
@@ -51,6 +60,8 @@ namespace yyytours.Controllers
         // GET: Place/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
             if (id == null)
             {
                 return NotFound();
@@ -71,6 +82,8 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
             if (id != place.ID)
             {
                 return NotFound();
@@ -102,6 +115,9 @@ namespace yyytours.Controllers
         // GET: Place/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+
             if (id == null)
             {
                 return NotFound();
@@ -114,6 +130,10 @@ namespace yyytours.Controllers
                 return NotFound();
             }
 
+            if(_context.Trip.Any(i=>i.PlaceId == id))
+            {
+                return BadRequest("אין אפשרות למחוק מיקום אשר קיימים טיולים בו");
+            }
             return View(place);
         }
 
@@ -122,6 +142,9 @@ namespace yyytours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (getSessionUserType() != UserType.Admin)
+                return View("NotAuthorized");
+                
             var place = await _context.Place.FindAsync(id);
             _context.Place.Remove(place);
             await _context.SaveChangesAsync();
@@ -131,6 +154,15 @@ namespace yyytours.Controllers
         private bool PlaceExists(string id)
         {
             return _context.Place.Any(e => e.ID == id);
+        }
+
+        private UserType? getSessionUserType()
+        {
+            if (!HttpContext.Session.Keys.Any(k => k.Equals("Type")))
+            {
+                return null;
+            }
+            return (UserType)HttpContext.Session.GetInt32("Type");
         }
     }
 }
