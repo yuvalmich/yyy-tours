@@ -1,4 +1,4 @@
-@model IEnumerable<yyytours.Models.FacebookPost>
+@model yyytours.Models.HomeViewModel
 
 @{
     ViewData["Title"] = "דף הבית";
@@ -33,11 +33,23 @@
 <section>
     <h4>תוכן הפייסבוק שלנו</h4>
     <div style="height: 250px; overflow: auto;" dir="rtl">
-        @foreach (var item in Model)
+        @foreach (var item in Model.FacebookPosts)
         {
             <div class="card facebook-post">
                 @Html.Raw(item.message.Replace("\n", "<br />"))
             </div>
+        }
+    </div>
+<section />
+
+<section>
+    <h4>המקומות המומלצים</h4>
+    <div style="height: 250px; overflow: auto;" dir="rtl">
+        @foreach (var item in Model.RecomendedPlaces)
+        {
+            <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Catalog", "Trip")?searchString=@item.Item1.Name'" >
+                @item.Item1.Name <span class="badge badge-light">@item.Item2</span>
+                </button>
         }
     </div>
 <section />
