@@ -8,8 +8,8 @@
 }
 
 <div class="jumbotron jumbotron-fluid">
-  <h1>@Html.DisplayFor(model=> model.DisplayName)</h1> 
-      <p class="lead">@Html.Display(Model.Date.ToShortDateString())</p>
+    <h1>@Html.DisplayFor(model => model.DisplayName)</h1>
+    <p class="lead">@Html.Display(Model.Date.ToShortDateString())</p>
 </div>
 
 <img id="place" src="@Model.Place.ImageUrl" alt="">
@@ -39,6 +39,13 @@
             <td>@Html.DisplayFor(model => model.Price) ש״ח לאדם</td>
         </tr>
     </table>
+    @if (Context.Session.GetString("FullName") != null)
+    {
+        <div>
+    להרשמה לטיול לחץ 
+        <a asp-action="Register" asp-route-tripID="@Model.ID" asp-route-userEmail="@Context.Session.GetString("Email")">כאן</a>
+    </div>
+    }
     <h3>מידע על המקום</h3>
     <div class="row">
         <div class="col-sm-8">

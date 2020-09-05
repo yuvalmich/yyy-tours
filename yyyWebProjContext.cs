@@ -37,6 +37,6 @@ namespace yyytours
 
         public DbSet<yyytours.Models.Trip> Trip { get; set; }
 
-
+        public DbSet<yyytours.Models.TripRegistration> TripRegistration { get; set; }
     }
 }

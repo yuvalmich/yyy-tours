@@ -1,0 +1,65 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model IEnumerable<yyytours.Models.TripRegistration>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Context.Session.GetString("FullName") != null)
+{
+    <h1>הטיולים שלי</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    שם הטיול
+                </th>
+                <th>
+                    מיקום הטיול
+                </th>
+                <th>
+                    תאריך ושעת הטיול
+                </th>
+                <th>
+                    מחיר הטיול
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Trip.DisplayName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Trip.Place.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Trip.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Trip.Price) ש"ח
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.ID">ביטול הרשמה</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h1>פעולה לא חוקית</h1>
+
+    <p>ניסית לגשת לדף שאינך מורשה אליו או שהמשתמש שלך התנתק</p>
+
+    <input type="button" value="לכניסה לחשבון" class="btn btn-primary" onclick="location.href='@Url.Action("Login", "User")'" />
+
+    <input type="button" value="חזרה לדף הבית" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'" />
+
+}

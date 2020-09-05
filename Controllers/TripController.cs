@@ -57,7 +57,32 @@ namespace yyytours.Controllers
             }
             return View(trip);
         }
+        public async Task<IActionResult> Register(string tripID, string userEmail)
+        {
+            if(tripID == null || tripID == "" || userEmail == null || userEmail.Length == 0)
+            {
+                return BadRequest();
+            }
 
+            var registeredUser = await _context.TripRegistration
+                .Where(tr => tr.TripId == tripID).Where(tr => tr.UserEmail == userEmail).ToListAsync();
+
+            if(registeredUser.Count != 0)
+            {
+                return View("../TripRegistration/RegistrationExist");
+            }
+
+            var tripReg = new TripRegistration();
+            tripReg.ID = Guid.NewGuid().ToString();
+            tripReg.TripId = tripID;
+            tripReg.UserEmail = userEmail;
+            tripReg.RegistrationDateTime = DateTime.Now;
+
+            _context.Add(tripReg);
+            await _context.SaveChangesAsync();
+
+            return View("../TripRegistration/RegistrationSuccess");
+        }
         public async Task<IActionResult> Catalog(string searchString)
     {
         IQueryable<Trip> trips = _context.Trip

@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    ViewData["Title"] = "הרשמה צלחה";
+}
+
+@if (Context.Session.GetString("FullName") != null)
+{
+    <h1>ההרשמה עברה בהצחלה!</h1>
+
+    <p>כעת תוכל לגשת לעמוד "הטיולים שלי" ולצפות בו.</p>
+}
+else
+{
+    <h1>אופס....</h1>
+
+    <p>אינך יכול לגשת לדף זה</p>
+}
+@if (Context.Session.GetString("FullName") != null)
+{
+    <input type="button" value="לטיולים שלי" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "TripRegistration")'" />
+}
+
+<input type="button" value="חזרה לדף הבית" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'" />

@@ -21,7 +21,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">עמוד ראשי</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="trip" asp-action="catalog">קטלוג טיולים</a>
@@ -35,9 +35,21 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Login">התחברות</a>
                             </li>
                         }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="TripRegistration" asp-action="Index">טיולים שלי</a>
+                            </li>
+                        }
 
                         @if (Context.Session.GetString("FullName") != null)
                         {
+                            //@if ((UserType)Context.Session.GetInt32("Type") == UserType.Guide)
+                            //{
+                            //    <li class="nav-item">
+                            //        <a class="nav-link text-dark" asp-area="" asp-controller="TripRegistration" asp-action="GuideTrips">משתתפי הטיולים שלי</a>
+                            //    </li>
+                            //}
 
                             @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
                             {
@@ -70,7 +82,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - yyy_tours - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - yyy_tours - <a asp-area="" asp-controller="Home" asp-action="Privacy">זכויות</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
