@@ -41,10 +41,9 @@
     </table>
     @if (Context.Session.GetString("FullName") != null)
     {
-        <div>
-    להרשמה לטיול לחץ 
-        <a asp-action="Register" asp-route-tripID="@Model.ID" asp-route-userEmail="@Context.Session.GetString("Email")">כאן</a>
-    </div>
+<div>
+    <button type="button" class="btn btn-primary"><a style="text-decoration:none; color:white" asp-action="Register" asp-route-tripID="@Model.ID" asp-route-userEmail="@Context.Session.GetString("Email")">להרשמה</a></button>
+</div>
     }
     <h3>מידע על המקום</h3>
     <div class="row">
