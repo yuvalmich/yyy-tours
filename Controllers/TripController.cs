@@ -67,7 +67,8 @@ namespace yyytours.Controllers
         {
             if(tripID == null || tripID == "" || userEmail == null || userEmail.Length == 0)
             {
-                return BadRequest();
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "בקשה לא תקינה", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
             var registeredUser = await _context.TripRegistration
@@ -244,6 +245,12 @@ namespace yyytours.Controllers
                 return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
+            if(_context.TripRegistration.Any(i=>i.TripId == id))
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק טיול שרשומים אליו", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
+            }
+
             var trip = await _context.Trip
                 .Include(t => t.Guide)
                 .Include(t => t.Place)
@@ -267,8 +274,17 @@ namespace yyytours.Controllers
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
             }
+
+            if(_context.TripRegistration.Any(i=>i.TripId == id))
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק טיול שרשומים אליו", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
+            }
                 
             var trip = await _context.Trip.FindAsync(id);
+
+            
+
             _context.Trip.Remove(trip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
