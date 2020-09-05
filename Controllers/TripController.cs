@@ -63,16 +63,21 @@ namespace yyytours.Controllers
             }
             return View(trip);
         }
-        public async Task<IActionResult> Register(string tripID, string userEmail)
+        public async Task<IActionResult> Register(string tripID)
         {
-            if(tripID == null || tripID == "" || userEmail == null || userEmail.Length == 0)
+            var requestedTrip = await _context.TripRegistration.Where(tr => tr.TripId == tripID).ToListAsync();
+
+            if (requestedTrip.Count == 0 || tripID == null || tripID == "" || HttpContext.Session.GetString("Email") == null || HttpContext.Session.GetString("Email").Length == 0)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return View("Error", new ErrorViewModel {ErrorDescription = "בקשה לא תקינה", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
+            // To confirm the user exist and the trip  ID Exist
+            //User from session
+
             var registeredUser = await _context.TripRegistration
-                .Where(tr => tr.TripId == tripID).Where(tr => tr.UserEmail == userEmail).ToListAsync();
+                .Where(tr => tr.TripId == tripID).Where(tr => tr.UserEmail == HttpContext.Session.GetString("Email")).ToListAsync();
 
             if(registeredUser.Count != 0)
             {
@@ -82,7 +87,7 @@ namespace yyytours.Controllers
             var tripReg = new TripRegistration();
             tripReg.ID = Guid.NewGuid().ToString();
             tripReg.TripId = tripID;
-            tripReg.UserEmail = userEmail;
+            tripReg.UserEmail = HttpContext.Session.GetString("Email");
             tripReg.RegistrationDateTime = DateTime.Now;
 
             _context.Add(tripReg);
