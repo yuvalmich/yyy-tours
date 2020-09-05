@@ -1,0 +1,152 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Newtonsoft.Json;
+
+@{
+    ViewData["Title"] = "גרפים";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section scripts {
+    <script src="https://d3js.org/d3.v4.js" SameSite=None></script>
+
+    <!-- Color scale -->
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" SameSite=None></script>
+
+    <script>
+        $(document).ready(() => {
+            graph1();
+            graph2();
+        });
+        function graph1() {
+            let data = @Html.Raw(JsonConvert.SerializeObject(@ViewData["Graph1"]));
+        
+            // set the dimensions and margins of the graph
+            let margin = { top: 30, right: 30, bottom: 120, left: 60 },
+                width = 550 - margin.left - margin.right,
+                height = 550 - margin.top - margin.bottom;
+            // append the svg object to the div called 'graph1'
+            let svg = d3.select("#graph1")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            // X axis
+            let x = d3.scaleBand()
+                .range([0, width])
+                .domain(data.map(function (d) { return d.date; }))
+                .padding(0.2);
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                //.attr("transform", "translate(-10,0)rotate(-45)")
+                //.style("text-anchor", "end")
+                .style("font-size", "15")
+                .style("fill", "black");
+            // Y axis
+            let y = d3.scaleLinear()
+                .domain([0, Math.max(...data.map(d => d.registeredCount))])
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .selectAll("text")
+                .style("fill", "black");
+            // Axis style
+            svg.selectAll("g")
+                .selectAll("path")
+                .attr("stroke", "#ddd")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7);
+            svg.selectAll("g")
+                .selectAll("line")
+                .attr("stroke", "#ddd")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7);
+            // Bars
+            svg.selectAll("mybar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", function (d) { return x(d.date); })
+                .attr("y", function (d) { return y(d.registeredCount); })
+                .attr("width", x.bandwidth())
+                .attr("height", function (d) { return height - y(d.registeredCount); })
+                .attr("fill", "#a5d5f8");
+        }
+        function graph2() {
+            let data = @Html.Raw(JsonConvert.SerializeObject(@ViewData["Graph2"]));
+            // set the dimensions and margins of the graph
+            let width = 550,
+                height = 550,
+                margin = 25;
+            // The radius of the pieplot is half the width or half the height (smallest one) minus margin.
+            let radius = Math.min(width, height) / 2 - margin;
+            // append the svg object to the div called 'graph2'
+            let svg = d3.select("#graph2")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${width / 2},${height / 2})`);
+            // set the color scale
+            let color = d3.scaleOrdinal()
+                .domain(data)
+                .range(d3.schemeSet3);
+            // Compute the position of each group on the pie
+            let pie = d3.pie()
+                .value(function (d) { return d.value; });
+            let data_ready = pie(d3.entries(data));
+            // shape helper to build arcs
+            let arcGenerator = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+            // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+            svg
+                .selectAll('mySlices')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', arcGenerator)
+                .attr('fill', function (d) { return (color(d.data.key)); })
+                .attr("stroke", "#222")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7);
+            // Now add the annotation. Use the centroid method to get the best coordinates
+            svg
+                .selectAll('mySlices')
+                .data(data_ready)
+                .enter()
+                .append('text')
+                .text(function (d) { return `${d.data.key}: ${d.data.value}`; })
+                .attr("transform", function (d) { return `translate(${arcGenerator.centroid(d)})`; })
+                .style("text-anchor", "middle")
+                .style("font-size", 15)
+                .style("fill", "#222");
+        }
+    </script>
+}
+@if (Context.Session.GetString("FullName") != null)
+{
+    <div class="row">
+        <div class="col-md-6">
+            <h2 style="text-align:center;">כמות נרשמים לטיולים לפי תאריך</h2>
+            <div id="graph1"></div>
+        </div>
+        <div class="col-md-6">
+            <h2 style="text-align:center;">כמות נרשמים לטיולים לפי סוג טיול</h2>
+            <div id="graph2"></div>
+        </div>
+    </div>
+}
+else
+{
+    <h1>פעולה לא חוקית</h1>
+
+    <p>ניסית לגשת לדף שאינך מורשה אליו או שהמשתמש שלך התנתק</p>
+
+    <input type="button" value="לכניסה לחשבון" class="btn btn-primary" onclick="location.href='@Url.Action("Login", "User")'" />
+
+    <input type="button" value="חזרה לדף הבית" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home")'" />
+
+}
