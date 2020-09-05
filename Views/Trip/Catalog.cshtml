@@ -11,7 +11,7 @@
     <form asp-action="Catalog" method="get">
     <div class="form-row">
         <div class="col-md-7">
-             <input type="text" placeholder="חיפוש לפי שם טיול, מקום ומדריך" autocomplete="off" name="SearchString" class="form-control" value="@ViewData["CurrentFilter"]" />
+             <input type="text" placeholder="חיפוש לפי שם טיול, מקום ומדריך" autocomplete="off" value="@ViewContext.HttpContext.Request.Query["SearchString"]" name="SearchString" class="form-control" value="@ViewData["CurrentFilter"]" />
              </div>
              <div  class="col-md-3">
             <input type="submit" value="חיפוש" class="btn btn-primary" /> |
