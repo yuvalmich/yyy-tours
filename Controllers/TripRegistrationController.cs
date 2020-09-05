@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -48,10 +49,19 @@ namespace yyy_tours
                 return View("../User/NotAuthorized");
             }
             string guideEmail = HttpContext.Session.GetString("Email");
-            var registeredUsersByTrips =  await _context.TripRegistration.Include(tr => tr.Trip).Where(tr => tr.Trip.GuideId == guideEmail).Include(tr => tr.User).GroupBy(tr => tr.Trip.DisplayName).ToDictionaryAsync(y => y.Key, y => y.Select(z => z));
+            var registeredUsersByTrips =  (await _context.TripRegistration.Include(tr => tr.Trip).Where(tr => tr.Trip.GuideId == guideEmail).Include(tr => tr.User).OrderBy(tr => tr.RegistrationDateTime).ToListAsync()).GroupBy(tr => tr.Trip.DisplayName);
             return View("../TripRegistration/TripGuide", registeredUsersByTrips);
-            //var guideTrips = await _context.Trip.Where(tr => tr.GuideId == guideEmail).Select(tr => tr.ID).ToListAsync();
-            //return View(await _context.TripRegistration.Where(tr => guideTrips.Contains(tr.TripId)).Include(tr => tr.Trip).Include(tr => tr.Trip.Place).OrderBy(tr => tr.Trip.Date).ToListAsync());
+        }
+
+        public async Task<IActionResult> ManagerTrips()
+        {
+            if (HttpContext.Session.GetString("Email") == null || HttpContext.Session.GetString("Email") == "" || getSessionUserType() != UserType.Admin)
+            {
+                return View("../User/NotAuthorized");
+            }
+
+            var registeredUsersByTrips = (await _context.TripRegistration.Include(tr => tr.Trip).Include(tr => tr.User).OrderBy(tr => tr.RegistrationDateTime).ToListAsync()).GroupBy(tr => tr.Trip.DisplayName);
+            return View("../TripRegistration/TripManager", registeredUsersByTrips);
         }
 
         // GET: TripRegistration/Details/5
@@ -169,6 +179,25 @@ namespace yyy_tours
             }
 
             return View(tripRegistration);
+        }
+
+        public async Task<IActionResult> ManagerDelete(string id)
+        {
+            if (HttpContext.Session.GetString("Email") == null || HttpContext.Session.GetString("Email") == "" || getSessionUserType() != UserType.Admin)
+            {
+                return View("../User/NotAuthorized");
+            }
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tripRegistration = await _context.TripRegistration.FindAsync(id);
+            _context.TripRegistration.Remove(tripRegistration);
+            await _context.SaveChangesAsync();
+
+            var registeredUsersByTrips = (await _context.TripRegistration.Include(tr => tr.Trip).Include(tr => tr.User).OrderBy(tr => tr.RegistrationDateTime).ToListAsync()).GroupBy(tr => tr.Trip.DisplayName);
+            return View("../TripRegistration/TripManager", registeredUsersByTrips);
         }
 
         // POST: TripRegistration/Delete/5
