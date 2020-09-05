@@ -10,6 +10,7 @@ using OpenWeatherMap.Standard.Enums;
 using yyytours;
 using yyytours.Models;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace yyytours.Controllers
 {
@@ -26,7 +27,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Index()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             var yyyWebProjContext = _context.Trip.Include(t => t.Guide).Include(t => t.Place);
             return View(await yyyWebProjContext.ToListAsync());
@@ -37,7 +41,8 @@ namespace yyytours.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
             var trip = await _context.Trip
@@ -46,7 +51,8 @@ namespace yyytours.Controllers
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (trip == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
             Current currentWeather = new Current("5572d59340b8fe8f0f32b4f5f6e2d57b", WeatherUnits.Metric);
@@ -61,7 +67,8 @@ namespace yyytours.Controllers
         {
             if(tripID == null || tripID == "" || userEmail == null || userEmail.Length == 0)
             {
-                return BadRequest();
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "בקשה לא תקינה", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
             var registeredUser = await _context.TripRegistration
@@ -107,7 +114,10 @@ namespace yyytours.Controllers
         public IActionResult Create()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
@@ -122,7 +132,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             trip.ID = Guid.NewGuid().ToString();
 
@@ -149,18 +162,24 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             var trip = await _context.Trip.FindAsync(id);
             if (trip == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
+
             ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
@@ -174,11 +193,15 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id != trip.ID)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             if (ModelState.IsValid)
@@ -192,7 +215,8 @@ namespace yyytours.Controllers
                 {
                     if (!TripExists(trip.ID))
                     {
-                        return NotFound();
+                        Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
                     }
                     else
                     {
@@ -210,11 +234,21 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
+            }
+
+            if(_context.TripRegistration.Any(i=>i.TripId == id))
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק טיול שרשומים אליו", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             var trip = await _context.Trip
@@ -223,7 +257,8 @@ namespace yyytours.Controllers
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (trip == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             return View(trip);
@@ -235,9 +270,21 @@ namespace yyytours.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+
+            if(_context.TripRegistration.Any(i=>i.TripId == id))
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק טיול שרשומים אליו", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
+            }
                 
             var trip = await _context.Trip.FindAsync(id);
+
+            
+
             _context.Trip.Remove(trip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

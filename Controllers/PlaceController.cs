@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using yyytours;
 using yyytours.Models;
 using Microsoft.AspNetCore.Http;
-
+using System.Net;
 
 namespace yyytours.Controllers
 {
@@ -25,7 +25,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Index()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             return View(await _context.Place.ToListAsync());
         }
@@ -34,7 +37,11 @@ namespace yyytours.Controllers
         public IActionResult Create()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+            
             return View();
         }
 
@@ -61,7 +68,11 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -70,7 +81,8 @@ namespace yyytours.Controllers
             var place = await _context.Place.FindAsync(id);
             if (place == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
             return View(place);
         }
@@ -83,10 +95,15 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id, [Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+
             if (id != place.ID)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
 
             if (ModelState.IsValid)
@@ -100,7 +117,8 @@ namespace yyytours.Controllers
                 {
                     if (!PlaceExists(place.ID))
                     {
-                        return NotFound();
+                        Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
                     }
                     else
                     {
@@ -116,23 +134,29 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
 
             var place = await _context.Place
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (place == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
 
             if(_context.Trip.Any(i=>i.PlaceId == id))
             {
-                return BadRequest("אין אפשרות למחוק מיקום אשר קיימים טיולים בו");
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק מקום אשר מקושרים אליו טיולים", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
             return View(place);
         }
@@ -143,9 +167,19 @@ namespace yyytours.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             var place = await _context.Place.FindAsync(id);
+
+            if(_context.Trip.Any(i=>i.PlaceId == id))
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק מקום אשר מקושרים אליו טיולים", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
+            }
+
             _context.Place.Remove(place);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
