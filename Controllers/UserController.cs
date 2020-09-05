@@ -200,9 +200,8 @@ namespace yyytours.Controllers
                 return View("NotFound");
 
             bool isGuideTours = _context.Trip.Count(t => t.GuideId == email) > 0;
-            // todo: when assa finish registration, add 
-            //  isSignToTours = _context.TripRegistration.Count(r => r.userEmail == email) > 0;
-            bool isSignToTours = false;
+            
+            bool isSignToTours = _context.TripRegistration.Count(r => r.UserEmail == email) > 0;
 
             if (isGuideTours)
             {
