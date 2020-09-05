@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using yyytours;
 using yyytours.Models;
 using Microsoft.AspNetCore.Http;
-
+using System.Net;
 
 namespace yyytours.Controllers
 {
@@ -25,7 +25,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Index()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             return View(await _context.Place.ToListAsync());
         }
@@ -34,7 +37,11 @@ namespace yyytours.Controllers
         public IActionResult Create()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+            
             return View();
         }
 
@@ -61,7 +68,11 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -83,7 +94,11 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id, [Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
+
             if (id != place.ID)
             {
                 return NotFound();
@@ -116,11 +131,15 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             var place = await _context.Place
@@ -143,7 +162,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             var place = await _context.Place.FindAsync(id);
             _context.Place.Remove(place);

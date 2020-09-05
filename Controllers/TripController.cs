@@ -10,6 +10,7 @@ using OpenWeatherMap.Standard.Enums;
 using yyytours;
 using yyytours.Models;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace yyytours.Controllers
 {
@@ -26,7 +27,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Index()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             var yyyWebProjContext = _context.Trip.Include(t => t.Guide).Include(t => t.Place);
             return View(await yyyWebProjContext.ToListAsync());
@@ -107,7 +111,10 @@ namespace yyytours.Controllers
         public IActionResult Create()
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
@@ -122,7 +129,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Create([Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             trip.ID = Guid.NewGuid().ToString();
 
@@ -149,7 +159,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id == null)
             {
@@ -174,7 +187,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Edit(string id, [Bind("ID,DisplayName,Description,PlaceId,GuideId,Price,Date,TimeInHours")] Trip trip)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id != trip.ID)
             {
@@ -210,7 +226,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
 
             if (id == null)
             {
@@ -235,7 +254,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+            }
                 
             var trip = await _context.Trip.FindAsync(id);
             _context.Trip.Remove(trip);
