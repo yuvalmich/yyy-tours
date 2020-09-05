@@ -81,7 +81,8 @@ namespace yyytours.Controllers
             var place = await _context.Place.FindAsync(id);
             if (place == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
             return View(place);
         }
@@ -101,7 +102,8 @@ namespace yyytours.Controllers
 
             if (id != place.ID)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
 
             if (ModelState.IsValid)
@@ -115,7 +117,8 @@ namespace yyytours.Controllers
                 {
                     if (!PlaceExists(place.ID))
                     {
-                        return NotFound();
+                        Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
                     }
                     else
                     {
@@ -139,19 +142,21 @@ namespace yyytours.Controllers
             if (id == null)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
 
             var place = await _context.Place
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (place == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "מקום זה לא נמצא", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
 
             if(_context.Trip.Any(i=>i.PlaceId == id))
             {
-                return BadRequest("אין אפשרות למחוק מיקום אשר קיימים טיולים בו");
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק מקום אשר מקושרים אליו טיולים", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
             }
             return View(place);
         }
@@ -168,6 +173,13 @@ namespace yyytours.Controllers
             }
                 
             var place = await _context.Place.FindAsync(id);
+
+            if(_context.Trip.Any(i=>i.PlaceId == id))
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return View("Error", new ErrorViewModel {ErrorDescription = "אין אפשרות למחוק מקום אשר מקושרים אליו טיולים", ControllerToLink="Place", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת המקומות"});
+            }
+
             _context.Place.Remove(place);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

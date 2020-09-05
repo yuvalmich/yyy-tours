@@ -41,7 +41,8 @@ namespace yyytours.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
             var trip = await _context.Trip
@@ -50,7 +51,8 @@ namespace yyytours.Controllers
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (trip == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});
             }
 
             Current currentWeather = new Current("5572d59340b8fe8f0f32b4f5f6e2d57b", WeatherUnits.Metric);
@@ -166,14 +168,17 @@ namespace yyytours.Controllers
 
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             var trip = await _context.Trip.FindAsync(id);
             if (trip == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
+
             ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
@@ -194,7 +199,8 @@ namespace yyytours.Controllers
 
             if (id != trip.ID)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             if (ModelState.IsValid)
@@ -208,7 +214,8 @@ namespace yyytours.Controllers
                 {
                     if (!TripExists(trip.ID))
                     {
-                        return NotFound();
+                        Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
                     }
                     else
                     {
@@ -233,7 +240,8 @@ namespace yyytours.Controllers
 
             if (id == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             var trip = await _context.Trip
@@ -242,7 +250,8 @@ namespace yyytours.Controllers
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (trip == null)
             {
-                return NotFound();
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
             return View(trip);
