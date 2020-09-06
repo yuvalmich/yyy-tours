@@ -53,7 +53,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Create([Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+                {
+                    Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+                }
             place.ID = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
