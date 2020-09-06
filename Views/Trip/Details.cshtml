@@ -110,7 +110,7 @@
         {
             @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
             {
-                <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a>
+                <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a> <span> | </span>
             }
         }
         <a asp-action="Catalog">חזרה לקטלוג</a>
