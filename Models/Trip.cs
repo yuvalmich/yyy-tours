@@ -34,6 +34,7 @@ namespace yyytours.Models
         public int Price { get; set; }
         [Display(Name = "תאריך ושעה")]
         [Required(ErrorMessage = "תאריך ושעת הטיול אינו יכול להיות ריק")]
+        [DisplayFormat(DataFormatString="{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
         [Display(Name = "זמן הטיול בשעות")]
         [Required(ErrorMessage = "זמן הטיול בשעות אינו יכול להיות ריק")]
@@ -54,6 +55,7 @@ namespace yyytours.Models
             }
         }
 
+        [DisplayFormat(DataFormatString="{0:dd/MM/yyyy HH:mm}")]
         public DateTime GetEndDateTime
         {
             get

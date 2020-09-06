@@ -30,7 +30,7 @@
     <p class="card-text">@item.DisplayName</p>
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">@item.Date.ToShortDateString()
+    <li class="list-group-item">@Html.DisplayFor(model => item.Date)
         @if(item.GetTimeToStart.Days <=3 && item.GetTimeToStart.Days > 1)
         {
             <span class="badge badge-secondary">בעוד @item.GetTimeToStart.Days ימים</span>
