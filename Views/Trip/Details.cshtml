@@ -98,9 +98,26 @@
             //Make the geocode request.
             searchManager.geocode(searchRequest);
         }
-    }
+                }
+
             </script>
-            <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG' async defer></script>
+
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $.ajax({
+                        type: "GET",
+                        crossDomain: true,
+                        dataType: 'script',
+                        url: "https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnLRbROtdXWlvP4UWt9svJoavuZ4iZ-ZdHOhUFeXSkQCrZ8JETrm0dSZ83SDChzG",
+                        success: function (data) {
+                            data;
+                        }
+                    })
+                });
+            </script>
+            
             <div id="myMap" style="position:relative;width:350px;height:250px;"></div>
         </div>
     </div>
@@ -110,7 +127,7 @@
         {
             @if ((UserType)Context.Session.GetInt32("Type") == UserType.Admin)
             {
-                <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a>
+                <a asp-action="Edit" asp-route-id="@Model.ID">עריכת הטיול</a> <span> | </span>
             }
         }
         <a asp-action="Catalog">חזרה לקטלוג</a>

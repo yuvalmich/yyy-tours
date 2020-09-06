@@ -114,3 +114,8 @@ video {
     position: absolute;
     left: 15px;
 }
+
+.nav-link:hover {
+    background: #fafafa;
+    font-weight: bold;
+}
