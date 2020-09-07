@@ -14,6 +14,7 @@ namespace yyytours.Models
         public string TripId { get; set; }
         [ForeignKey("User")]
         public string UserEmail { get; set; }
+        [DisplayFormat(DataFormatString="{0:dd/MM/yyyy HH:mm}")]
         public DateTime RegistrationDateTime { get; set; }
         public User User { get; set; }
         public Trip Trip { get; set; }

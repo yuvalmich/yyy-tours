@@ -25,7 +25,7 @@ namespace yyytours.Controllers
         {
 
             var posts = await FacebookApi.GetPagePosts();
-            var recommenedePlaces = CreatePlacesStatistics();
+            var recommenedePlaces = CreatePlacesStatistics().Take(5);
             return View(new HomeViewModel {FacebookPosts = posts, RecomendedPlaces = recommenedePlaces});
         }
 

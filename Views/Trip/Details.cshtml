@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td>@Html.DisplayNameFor(model => model.Date):</td>
-            <td>יום @Html.DisplayFor(model => model.GetTripDayInHebrew) ה- @Model.Date.ToShortDateString() בשעה @Model.Date.ToShortTimeString()</td>
+            <td>יום @Html.DisplayFor(model => model.GetTripDayInHebrew) ה- @Html.DisplayFor(model => model.Date)</td>
         </tr>
         <tr>
             <td>@Html.DisplayNameFor(model => model.TimeInHours):</td>

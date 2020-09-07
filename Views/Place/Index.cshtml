@@ -10,6 +10,17 @@
 <p>
     <a asp-action="Create">יצירת מיקום חדש</a>
 </p>
+<form asp-action="Index" method="get">
+    <div class="form-row">
+        <div class="col-md-7">
+             <input type="text" placeholder="חיפוש לפי שם מקום" autocomplete="off" value="@ViewContext.HttpContext.Request.Query["SearchString"]" name="SearchString" class="form-control" value="@ViewData["CurrentFilter"]" />
+             </div>
+             <div  class="col-md-3">
+            <input type="submit" value="חיפוש" class="btn btn-primary" /> |
+            <a asp-action="Catalog">חזרה לרשימה מלאה</a>
+             </div>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>

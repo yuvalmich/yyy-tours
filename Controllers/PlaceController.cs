@@ -22,15 +22,20 @@ namespace yyytours.Controllers
         }
 
         // GET: Place
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString)
         {
             if (getSessionUserType() != UserType.Admin)
             {
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
             }
-                
-            return View(await _context.Place.ToListAsync());
+            IQueryable<Place> places = _context.Place;
+            if(!string.IsNullOrWhiteSpace(SearchString))
+            {
+                places = places.Where(i=> i.Name.Contains(SearchString));
+            }
+
+            return View(await places.ToListAsync());
         }
 
         // GET: Place/Create
@@ -53,7 +58,10 @@ namespace yyytours.Controllers
         public async Task<IActionResult> Create([Bind("ID,Name,Description,ImageUrl,Country")] Place place)
         {
             if (getSessionUserType() != UserType.Admin)
-                return View("NotAuthorized");
+                {
+                    Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
+                }
             place.ID = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
