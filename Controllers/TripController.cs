@@ -152,7 +152,7 @@ namespace yyytours.Controllers
                 string[] postMessage = {
                     trip.DisplayName,
                     "תיאור  הטיול: " + trip.Description,
-                    "למידע נוסף והרשמה  לטיול: " + "https://localhost:44334/trip/Details/" + trip.ID
+                    "למידע נוסף והרשמה  לטיול: " + "https://localhost:5001/trip/Details/" + trip.ID
                 };
                 await FacebookApi.CreateFacebookPost(postMessage);
 
