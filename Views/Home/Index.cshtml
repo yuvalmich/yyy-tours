@@ -44,7 +44,7 @@
 
 <section>
     <h4>המקומות המומלצים</h4>
-    <div style="height: 250px; overflow: auto;" dir="rtl">
+    <div style="height: 100px; overflow: auto;" dir="rtl">
         @foreach (var item in Model.RecomendedPlaces)
         {
             <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Catalog", "Trip")?searchString=@item.Item1.Name'" >
