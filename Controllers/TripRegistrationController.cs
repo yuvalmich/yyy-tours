@@ -206,14 +206,6 @@ namespace yyy_tours
                 return NotFound();
             }
 
-            var checkUserRegistration = await _context.TripRegistration.Where(tr => tr.UserEmail == HttpContext.Session.GetString("Email")).Where(tr => tr.TripId == id).FirstOrDefaultAsync();
-
-            if(checkUserRegistration == null)
-            {
-                Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                return View("Error", new ErrorViewModel { ErrorDescription = "לא ניתן למחוק טיולים שלא שלך", ControllerToLink = "Home", ActionToLink = "Index", TextToLink = "חזרה לעמוד הבית" });
-            }
-
             var tripRegistration = await _context.TripRegistration.Include(tr => tr.Trip).Include(tr => tr.Trip.Place)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (tripRegistration == null)
@@ -249,6 +241,12 @@ namespace yyy_tours
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var tripRegistration = await _context.TripRegistration.FindAsync(id);
+
+            if (!tripRegistration.UserEmail.Equals(HttpContext.Session.GetString("Email")))
+            {
+                return View("../User/NotAuthorized");
+            }
+
             _context.TripRegistration.Remove(tripRegistration);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
