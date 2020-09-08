@@ -240,6 +240,12 @@ namespace yyy_tours
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var tripRegistration = await _context.TripRegistration.FindAsync(id);
+
+            if (!tripRegistration.UserEmail.Equals(HttpContext.Session.GetString("Email")))
+            {
+                return View("../User/NotAuthorized");
+            }
+
             _context.TripRegistration.Remove(tripRegistration);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
