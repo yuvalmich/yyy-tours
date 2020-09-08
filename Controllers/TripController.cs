@@ -65,9 +65,9 @@ namespace yyytours.Controllers
         }
         public async Task<IActionResult> Register(string tripID)
         {
-            var requestedTrip = await _context.TripRegistration.Where(tr => tr.TripId == tripID).ToListAsync();
+            var requestedTrip = await _context.Trip.Where(tr => tr.ID == tripID).FirstOrDefaultAsync();
 
-            if (requestedTrip.Count == 0 || tripID == null || tripID == "" || HttpContext.Session.GetString("Email") == null || HttpContext.Session.GetString("Email").Length == 0)
+            if (requestedTrip == null || HttpContext.Session.GetString("Email") == null || HttpContext.Session.GetString("Email").Length == 0)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return View("Error", new ErrorViewModel {ErrorDescription = "בקשה לא תקינה", ControllerToLink="Trip", ActionToLink=nameof(Catalog), TextToLink="חזרה לקטלוג הטיולים"});

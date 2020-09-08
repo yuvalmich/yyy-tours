@@ -77,7 +77,7 @@ namespace yyy_tours
 
             ViewData["Graph1"] = (await _context.TripRegistration.Include(tr => tr.Trip).ToListAsync()).OrderBy(tr => tr.RegistrationDateTime).GroupBy(tr => tr.RegistrationDateTime.Date).Select(tr => new RegistrationByDateCount
             {
-                date = tr.Key.Date.ToShortDateString(),
+                date = tr.Key.Date.ToString("dd/MM/yyyy"),
                 registeredCount = tr.Count()
             }).ToList();
 
