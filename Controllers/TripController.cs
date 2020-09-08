@@ -124,7 +124,7 @@ namespace yyytours.Controllers
                 return View("Error", new ErrorViewModel {ErrorDescription = "אינך מורשה לגשת לעמוד זה"});
             }
 
-            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide || i.Type == UserType.Admin), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View();
         }
@@ -185,7 +185,7 @@ namespace yyytours.Controllers
                 return View("Error", new ErrorViewModel {ErrorDescription = "טיול זה לא נמצא", ControllerToLink="Trip", ActionToLink=nameof(Index), TextToLink="חזרה לרשימת הטיולים"});
             }
 
-            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide), "Email", "FullName");
+            ViewData["GuideId"] = new SelectList(_context.User.Where(i=> i.Type == UserType.Guide || i.Type == UserType.Admin), "Email", "FullName");
             ViewData["PlaceId"] = new SelectList(_context.Place, "ID", "Name");
             return View(trip);
         }
