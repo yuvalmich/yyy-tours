@@ -25,7 +25,7 @@ namespace yyytours.Controllers
         {
 
             var posts = await FacebookApi.GetPagePosts();
-            var recommenedePlaces = CreatePlacesStatistics().Take(5);
+            var recommenedePlaces = CreatePlacesStatistics().Take(3);
             return View(new HomeViewModel {FacebookPosts = posts, RecomendedPlaces = recommenedePlaces});
         }
 
@@ -48,8 +48,7 @@ namespace yyytours.Controllers
                 orderby tripRegs.Count() descending
                 select tripRegs.Key;
              var recommenedeTripsIdsLst = recommenedeTripsIds.ToList();
-             var recommenedePlaces = _context.Trip.Include(t => t.Place)
-             .Where(i=>recommenedeTripsIds.Contains(i.ID)).ToList()
+             var recommenedePlaces = _context.Trip.Include(t => t.Place).ToList()
              .OrderBy(i=> recommenedeTripsIdsLst.IndexOf(i.ID))
              .GroupBy(i=>i.Place)
              .OrderByDescending(byPlace => byPlace.Count())
