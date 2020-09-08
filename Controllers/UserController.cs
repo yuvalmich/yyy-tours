@@ -177,7 +177,7 @@ namespace yyytours.Controllers
         #region delete user
         public async Task<IActionResult> Delete(string email)
         {
-            if (getSessionUserType() != UserType.Admin)
+            if (getSessionUserType() != UserType.Admin || HttpContext.Session.GetString("Email").Equals(email))
                 return View("NotAuthorized");
 
             var user = await _context.User.FirstOrDefaultAsync(m => m.Email == email);
