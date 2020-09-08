@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 //using System.Data.Entity;
 using Microsoft.AspNetCore.Http;
@@ -203,6 +204,14 @@ namespace yyy_tours
             if (id == null)
             {
                 return NotFound();
+            }
+
+            var checkUserRegistration = await _context.TripRegistration.Where(tr => tr.UserEmail == HttpContext.Session.GetString("Email")).Where(tr => tr.TripId == id).FirstOrDefaultAsync();
+
+            if(checkUserRegistration == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                return View("Error", new ErrorViewModel { ErrorDescription = "לא ניתן למחוק טיולים שלא שלך", ControllerToLink = "Home", ActionToLink = "Index", TextToLink = "חזרה לעמוד הבית" });
             }
 
             var tripRegistration = await _context.TripRegistration.Include(tr => tr.Trip).Include(tr => tr.Trip.Place)
