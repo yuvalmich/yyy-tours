@@ -42,28 +42,28 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            <td width="10%">
                 @Html.DisplayFor(modelItem => item.DisplayName)
             </td>
-            <td>
+            <td width="25%">
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
+            <td width="5%">
                 @Html.DisplayFor(modelItem => item.Place.Name)
             </td>
-            <td>
+            <td width="10%">
                 @Html.DisplayFor(modelItem => item.Guide.FullName)
             </td>
-            <td>
+            <td width="5%">
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
-            <td>
+            <td width="10%">
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
-            <td>
+            <td width="5%">
                 @Html.DisplayFor(modelItem => item.TimeInHours)
             </td>
-            <td>
+            <td width="20%">
                 <a asp-action="Details" asp-route-id="@item.ID">דף טיול</a> |
                 <a asp-action="Edit" asp-route-id="@item.ID">עריכה</a> |
                 <a asp-action="Delete" asp-route-id="@item.ID">מחיקה</a>
